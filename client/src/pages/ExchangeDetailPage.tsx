@@ -14,15 +14,21 @@ import { ExchangeActions } from '@/features/exchanges/components/ExchangeActions
 import { ExchangeTotals } from '@/features/exchanges/components/ExchangeTotals';
 import { RowTable } from '@/features/exchanges/components/RowTable';
 import { useExchange } from '@/features/exchanges/hooks';
-import { useAuth } from '@/features/auth/hooks';
+import { useAdminExchange } from '@/features/admin/hooks';
+import { isAdminRole, useAuth } from '@/features/auth/hooks';
 import { draftFromRow, draftToRow } from '@/features/exchanges/rowDraft';
 import { formatDateTime } from '@/lib/format';
 import { STATUS_LABELS } from '@/lib/labels';
 
 export function ExchangeDetailPage() {
     const { id } = useParams<{ id: string }>();
-    const { data: exchange, isLoading, isError } = useExchange(id);
     const { user } = useAuth();
+    const own = useExchange(id);
+    // Admins can open any exchange, including those of past campaigns, through the admin endpoint.
+    const admin = useAdminExchange(id, isAdminRole(user?.role) && own.isError);
+    const exchange = own.data ?? admin.data;
+    const isLoading = own.isLoading || admin.isLoading;
+    const isError = own.isError && (admin.isError || !isAdminRole(user?.role));
 
     if (isLoading) return <Skeleton className="h-96 w-full" />;
     if (isError || !exchange) {
@@ -41,6 +47,7 @@ export function ExchangeDetailPage() {
     }
 
     const isSender = exchange.from._id === user?._id;
+    const isParty = isSender || exchange.to._id === user?._id;
     const counterpart = isSender ? exchange.to : exchange.from;
     const rows = exchange.rows.map(draftFromRow);
     const decimos = exchangeTotalDecimos(rows.map(draftToRow));
@@ -48,7 +55,13 @@ export function ExchangeDetailPage() {
     return (
         <>
             <PageHeader
-                title={isSender ? `Sobre para ${counterpart.name}` : `Sobre de ${counterpart.name}`}
+                title={
+                    !isParty
+                        ? `Sobre de ${exchange.from.name} para ${exchange.to.name}`
+                        : isSender
+                          ? `Sobre para ${counterpart.name}`
+                          : `Sobre de ${counterpart.name}`
+                }
                 description={`Nº de receptor ${counterpart.receptorNumber} · ${counterpart.poblacion} (${counterpart.provincia})`}
                 actions={
                     <Button asChild variant="outline">
@@ -63,7 +76,7 @@ export function ExchangeDetailPage() {
                 <StatusBadge status={exchange.status} />
                 <DirectionBadge direction={exchange.direction} />
                 <span className="text-sm text-muted-foreground">
-                    {isSender ? 'Lo envías tú' : 'Te lo envían a ti'}
+                    {!isParty ? 'Vista de administrador' : isSender ? 'Lo envías tú' : 'Te lo envían a ti'}
                     {exchange.sentAt && ` · enviado el ${formatDateTime(exchange.sentAt)}`}
                     {exchange.respondedAt && ` · respondido el ${formatDateTime(exchange.respondedAt)}`}
                 </span>

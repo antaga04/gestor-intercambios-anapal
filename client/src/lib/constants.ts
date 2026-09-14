@@ -18,6 +18,8 @@ export interface NavItem {
     icon: LucideIcon;
     /** Show the pending-inbox badge on this item. */
     inboxBadge?: boolean;
+    /** Show the pending password-requests badge (admins). */
+    requestsBadge?: boolean;
 }
 
 export const MAIN_NAV: NavItem[] = [
@@ -31,7 +33,13 @@ export const MAIN_NAV: NavItem[] = [
 export const ADMIN_NAV: (NavItem & { roles: Role[] })[] = [
     { title: 'Panel', to: '/admin', icon: ShieldCheck, roles: ['admin', 'superadmin'] },
     { title: 'Usuarios', to: '/admin/usuarios', icon: Users, roles: ['admin', 'superadmin'] },
-    { title: 'Solicitudes', to: '/admin/solicitudes', icon: KeyRound, roles: ['admin', 'superadmin'] },
+    {
+        title: 'Solicitudes',
+        to: '/admin/solicitudes',
+        icon: KeyRound,
+        roles: ['admin', 'superadmin'],
+        requestsBadge: true,
+    },
     { title: 'Campañas', to: '/admin/campanas', icon: CalendarRange, roles: ['superadmin'] },
 ];
 

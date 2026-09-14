@@ -44,6 +44,7 @@ export function AppSidebar() {
     const { data: campaign } = useActiveCampaign();
     const { data: dashboard } = useDashboard();
     const inboxCount = dashboard?.inboxPending ?? 0;
+    const requestsCount = dashboard?.adminPendingRequests ?? 0;
     const adminItems = ADMIN_NAV.filter((i) => user && (user.role === 'superadmin' || i.roles.includes(user.role)));
 
     return (
@@ -75,7 +76,11 @@ export function AppSidebar() {
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {adminItems.map((item) => (
-                                    <NavEntry key={item.to} item={item} />
+                                    <NavEntry
+                                        key={item.to}
+                                        item={item}
+                                        badge={item.requestsBadge ? requestsCount : undefined}
+                                    />
                                 ))}
                             </SidebarMenu>
                         </SidebarGroupContent>

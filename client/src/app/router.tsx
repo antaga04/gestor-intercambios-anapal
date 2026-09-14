@@ -3,7 +3,6 @@ import { AnonymousOnly, PrivateRoute } from '@/app/guards/PrivateRoute';
 import { RoleRoute } from '@/app/guards/RoleRoute';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PublicLayout } from '@/components/layout/PublicLayout';
-import { ComingSoonPage } from '@/pages/ComingSoonPage';
 import { ControlListPage } from '@/pages/ControlListPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
@@ -20,6 +19,10 @@ import { RegisterPage } from '@/pages/RegisterPage';
 import { ResendVerificationPage } from '@/pages/ResendVerificationPage';
 import { VerifyEmailPage } from '@/pages/VerifyEmailPage';
 import { AdminCampaignsPage } from '@/pages/admin/AdminCampaignsPage';
+import { AdminPanelPage } from '@/pages/admin/AdminPanelPage';
+import { AdminPasswordRequestsPage } from '@/pages/admin/AdminPasswordRequestsPage';
+import { AdminUserDetailPage } from '@/pages/admin/AdminUserDetailPage';
+import { AdminUsersPage } from '@/pages/admin/AdminUsersPage';
 
 export function AppRouter() {
     return (
@@ -47,15 +50,11 @@ export function AppRouter() {
                         <Route path="/intercambios/:id/editar" element={<ExchangeEditorPage mode="edit" />} />
                         <Route path="/mi-loteria" element={<MyLotteryPage />} />
                         <Route path="/lista-control" element={<ControlListPage />} />
-                        {/* Phase 9 */}
                         <Route element={<RoleRoute roles={['admin', 'superadmin']} />}>
-                            <Route path="/admin" element={<ComingSoonPage title="Panel de administración" />} />
-                            <Route path="/admin/usuarios" element={<ComingSoonPage title="Usuarios" />} />
-                            <Route path="/admin/usuarios/:id" element={<ComingSoonPage title="Usuario" />} />
-                            <Route
-                                path="/admin/solicitudes"
-                                element={<ComingSoonPage title="Solicitudes de contraseña" />}
-                            />
+                            <Route path="/admin" element={<AdminPanelPage />} />
+                            <Route path="/admin/usuarios" element={<AdminUsersPage />} />
+                            <Route path="/admin/usuarios/:id" element={<AdminUserDetailPage />} />
+                            <Route path="/admin/solicitudes" element={<AdminPasswordRequestsPage />} />
                             <Route element={<RoleRoute roles={['superadmin']} />}>
                                 <Route path="/admin/campanas" element={<AdminCampaignsPage />} />
                             </Route>

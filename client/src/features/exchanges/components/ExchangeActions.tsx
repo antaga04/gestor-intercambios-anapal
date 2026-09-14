@@ -14,7 +14,7 @@ import {
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { RejectDialog } from '@/features/exchanges/components/RejectDialog';
 import { useAcceptExchange, useCancelExchange, useDeleteExchange, useSendExchange } from '@/features/exchanges/hooks';
-import { useAuth } from '@/features/auth/hooks';
+import { isAdminRole, useAuth } from '@/features/auth/hooks';
 import { PdfPreviewDialog } from '@/features/pdf/PdfPreviewDialog';
 import { useExchangePdf } from '@/features/pdf/hooks';
 import { ApiClientError } from '@/lib/api';
@@ -40,7 +40,9 @@ export function ExchangeActions({ exchange, variant = 'menu', onDeleted }: Excha
 
     const isSender = exchange.from._id === user?._id;
     const isReceiver = exchange.to._id === user?._id;
-    const canEdit = isSender;
+    // Admins may edit/delete any exchange (server bypass); they never send/accept on someone's behalf.
+    const isAdminViewer = isAdminRole(user?.role) && !isSender && !isReceiver;
+    const canEdit = isSender || isAdminViewer;
     const canSend = isSender && ['draft', 'rejected', 'cancelled'].includes(exchange.status) && exchange.rowCount > 0;
     const canCancel = isSender && exchange.status === 'pending';
     const canRespond = isReceiver && exchange.status === 'pending';
@@ -105,7 +107,7 @@ export function ExchangeActions({ exchange, variant = 'menu', onDeleted }: Excha
                     Cancelar envío
                 </ActionItem>
             )}
-            {isSender && (
+            {(isSender || isAdminViewer) && (
                 <>
                     {variant === 'menu' && <DropdownMenuSeparator />}
                     <ActionItem

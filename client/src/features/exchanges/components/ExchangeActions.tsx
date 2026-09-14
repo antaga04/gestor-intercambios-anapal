@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, MoreHorizontal, Pencil, Send, Trash2, X } from 'lucide-react';
+import { Check, Eye, FileDown, MoreHorizontal, Pencil, Send, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 import type { ExchangeSummary } from '@anapal/shared';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,8 @@ import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { RejectDialog } from '@/features/exchanges/components/RejectDialog';
 import { useAcceptExchange, useCancelExchange, useDeleteExchange, useSendExchange } from '@/features/exchanges/hooks';
 import { useAuth } from '@/features/auth/hooks';
+import { PdfPreviewDialog } from '@/features/pdf/PdfPreviewDialog';
+import { useExchangePdf } from '@/features/pdf/hooks';
 import { ApiClientError } from '@/lib/api';
 import { t } from '@/lib/messages';
 
@@ -34,6 +36,7 @@ export function ExchangeActions({ exchange, variant = 'menu', onDeleted }: Excha
     const cancel = useCancelExchange();
     const accept = useAcceptExchange();
     const remove = useDeleteExchange();
+    const pdf = useExchangePdf();
 
     const isSender = exchange.from._id === user?._id;
     const isReceiver = exchange.to._id === user?._id;
@@ -105,6 +108,23 @@ export function ExchangeActions({ exchange, variant = 'menu', onDeleted }: Excha
             {isSender && (
                 <>
                     {variant === 'menu' && <DropdownMenuSeparator />}
+                    <ActionItem
+                        variant={variant}
+                        icon={Eye}
+                        secondary
+                        onClick={() => void pdf.previewExchange(exchange)}
+                    >
+                        Vista previa PDF
+                    </ActionItem>
+                    <ActionItem
+                        variant={variant}
+                        icon={FileDown}
+                        secondary
+                        onClick={() => void pdf.downloadExchange(exchange)}
+                    >
+                        Descargar PDF
+                    </ActionItem>
+                    {variant === 'menu' && <DropdownMenuSeparator />}
                     <ActionItem variant={variant} icon={Trash2} destructive onClick={() => setConfirmDelete(true)}>
                         Eliminar
                     </ActionItem>
@@ -144,6 +164,7 @@ export function ExchangeActions({ exchange, variant = 'menu', onDeleted }: Excha
                 onConfirm={() => void onDelete()}
             />
             <RejectDialog open={rejecting} onOpenChange={setRejecting} exchangeId={exchange._id} />
+            <PdfPreviewDialog preview={pdf.preview} onClose={pdf.closePreview} />
         </>
     );
 }
@@ -152,12 +173,15 @@ function ActionItem({
     variant,
     icon: Icon,
     destructive,
+    secondary,
     onClick,
     children,
 }: {
     variant: 'menu' | 'buttons';
     icon: typeof Send;
     destructive?: boolean;
+    /** Outline button in `buttons` mode (non-primary actions such as PDFs). */
+    secondary?: boolean;
     onClick: () => void;
     children: React.ReactNode;
 }) {
@@ -169,7 +193,7 @@ function ActionItem({
         );
     }
     return (
-        <Button type="button" variant={destructive ? 'outline' : 'default'} size="sm" onClick={onClick}>
+        <Button type="button" variant={destructive || secondary ? 'outline' : 'default'} size="sm" onClick={onClick}>
             <Icon /> {children}
         </Button>
     );

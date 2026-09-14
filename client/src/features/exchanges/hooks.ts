@@ -43,6 +43,7 @@ export function useInvalidateExchanges() {
     return (id?: string) => {
         void queryClient.invalidateQueries({ queryKey: exchangeKeys.all });
         void queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+        void queryClient.invalidateQueries({ queryKey: ['control-list'] });
         if (id) void queryClient.invalidateQueries({ queryKey: exchangeKeys.detail(id) });
     };
 }

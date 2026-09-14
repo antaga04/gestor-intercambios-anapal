@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ArrowLeftRight, Inbox, Search } from 'lucide-react';
+import { ArrowLeftRight, Inbox, Loader2, Mails, Search } from 'lucide-react';
 import { EXCHANGE_STATUS, type ExchangeStatus } from '@anapal/shared';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,9 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ExchangeTable } from '@/features/exchanges/components/ExchangeTable';
 import { useExchanges, useInbox } from '@/features/exchanges/hooks';
+import { useActiveCampaign } from '@/features/campaigns/hooks';
 import { useDashboard } from '@/features/dashboard/hooks';
+import { useExchangePdf } from '@/features/pdf/hooks';
 import { STATUS_LABELS } from '@/lib/labels';
 import { formatInt } from '@/lib/format';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -33,6 +35,9 @@ export function ExchangesListPage() {
 
     const { data: dashboard } = useDashboard();
     const inboxCount = dashboard?.inboxPending ?? 0;
+    const { data: campaign } = useActiveCampaign();
+    const envelopes = useExchangePdf();
+    const envelopesToSend = dashboard?.envelopesToSend ?? 0;
 
     const query = useMemo(
         () => ({
@@ -70,11 +75,26 @@ export function ExchangesListPage() {
                 title="Intercambios"
                 description="Los sobres que envías y los que recibes en esta campaña."
                 actions={
-                    <Button asChild>
-                        <Link to="/intercambios/nuevo">
-                            <ArrowLeftRight /> Nuevo intercambio
-                        </Link>
-                    </Button>
+                    <>
+                        <Button
+                            variant="outline"
+                            disabled={envelopesToSend === 0 || envelopes.busy}
+                            onClick={() =>
+                                void envelopes.downloadAll({
+                                    onlyEnvelopes: false,
+                                    campaignName: campaign?.name ?? 'campaña',
+                                })
+                            }
+                        >
+                            {envelopes.busy ? <Loader2 className="animate-spin" /> : <Mails />} Descargar todos los
+                            sobres
+                        </Button>
+                        <Button asChild>
+                            <Link to="/intercambios/nuevo">
+                                <ArrowLeftRight /> Nuevo intercambio
+                            </Link>
+                        </Button>
+                    </>
                 }
             />
 

@@ -6,6 +6,7 @@ import {
     ClipboardList,
     FileEdit,
     Inbox,
+    Mails,
     PackageOpen,
     Send,
     Ticket,
@@ -27,6 +28,7 @@ const QUICK_ACTIONS = [
     { to: '/intercambios/nuevo', label: 'Nuevo intercambio', icon: ArrowLeftRight },
     { to: '/intercambios?tab=bandeja', label: 'Ver bandeja', icon: Inbox },
     { to: '/mi-loteria', label: 'Importar lotería', icon: Ticket },
+    { to: '/lista-control', label: 'Descargar sobres', icon: Mails },
     { to: '/lista-control', label: 'Lista de control', icon: ClipboardList },
 ];
 
@@ -161,7 +163,7 @@ export function DashboardPage() {
                 <h2 className="text-base font-semibold">Acciones rápidas</h2>
                 <div className="flex flex-wrap gap-2">
                     {QUICK_ACTIONS.map((a) => (
-                        <Button key={a.to} asChild variant="outline">
+                        <Button key={a.label} asChild variant="outline">
                             <Link to={a.to}>
                                 <a.icon /> {a.label}
                             </Link>

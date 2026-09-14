@@ -4,6 +4,7 @@ import { RoleRoute } from '@/app/guards/RoleRoute';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PublicLayout } from '@/components/layout/PublicLayout';
 import { ComingSoonPage } from '@/pages/ComingSoonPage';
+import { ControlListPage } from '@/pages/ControlListPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { LandingPage } from '@/pages/LandingPage';
@@ -44,9 +45,8 @@ export function AppRouter() {
                         <Route path="/intercambios/nuevo" element={<ExchangeEditorPage mode="create" />} />
                         <Route path="/intercambios/:id" element={<ExchangeDetailPage />} />
                         <Route path="/intercambios/:id/editar" element={<ExchangeEditorPage mode="edit" />} />
-                        {/* Phase 7 */}
                         <Route path="/mi-loteria" element={<MyLotteryPage />} />
-                        <Route path="/lista-control" element={<ComingSoonPage title="Lista de control" />} />
+                        <Route path="/lista-control" element={<ControlListPage />} />
                         {/* Phase 9 */}
                         <Route element={<RoleRoute roles={['admin', 'superadmin']} />}>
                             <Route path="/admin" element={<ComingSoonPage title="Panel de administración" />} />

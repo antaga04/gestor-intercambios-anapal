@@ -9,6 +9,7 @@ import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { LandingPage } from '@/pages/LandingPage';
 import { LegalPage } from '@/pages/LegalPage';
 import { LoginPage } from '@/pages/LoginPage';
+import { MyLotteryPage } from '@/pages/MyLotteryPage';
 import { NewExchangePage } from '@/pages/NewExchangePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProfilePage } from '@/pages/ProfilePage';
@@ -45,7 +46,7 @@ export function AppRouter() {
                             path="/intercambios/:id/editar"
                             element={<ComingSoonPage title="Editar intercambio" />}
                         />
-                        <Route path="/mi-loteria" element={<ComingSoonPage title="Mi lotería" />} />
+                        <Route path="/mi-loteria" element={<MyLotteryPage />} />
                         <Route path="/lista-control" element={<ComingSoonPage title="Lista de control" />} />
                         {/* Phase 9 */}
                         <Route element={<RoleRoute roles={['admin', 'superadmin']} />}>

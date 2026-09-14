@@ -128,9 +128,9 @@ Steps
 
 Done when
 
-- [ ] Printed envelope from the template lines up with the boxes (both blocks) on A4.
-- [ ] "Descargar todos los sobres" yields one PDF, ordered by receptor number, only outgoing pending/accepted; "Solo sobres" skips sheets.
-- [ ] CSV opens in Excel (Spanish locale) with correct accents and `;` separators.
+- [x] Printed envelope from the template lines up with the boxes (both blocks). _(The template is 200 × 270 mm, not A4; verified on a rasterised render — print one on paper without "fit to page" to confirm.)_
+- [x] "Descargar todos los sobres" yields one PDF, ordered by receptor number, only outgoing pending/accepted; "Solo sobres" skips sheets.
+- [x] CSV opens in Excel (Spanish locale) with correct accents and `;` separators. _(BOM + `;` + `2,4` decimals verified on the endpoint output; open it in Excel once to be sure.)_
 
 ## Phase 8 — Dashboard stats polish
 

@@ -208,30 +208,39 @@ interface ControlList {
 }
 ```
 
-Rendered as a table (`/lista-control`), exported as CSV (`;` separator, UTF-8 BOM) and PDF (see 8), and available to admins for any user.
+Rules: only live exchanges (draft/pending/accepted) form a row — rejected and cancelled ones are not envelopes; incoming drafts are ignored (unsent, private to the other admon); rows are sorted with `compareReceptor` (numeric collation, so `9` < `10`). `EXCHANGE_STATUS_LABELS` / `PAIR_DIRECTION_LABELS` live next to it for CSV/PDF text.
+
+Rendered as a table (`/lista-control`), exported as CSV (`controlListToCsv`, `;` separator, UTF-8 BOM) and PDF (see 8), and available to admins for any user.
 
 ## 8. PDFs (client-side, `pdf-lib`)
 
-`client/src/features/pdf/`:
+`client/src/features/pdf/` (pdf-lib is imported dynamically, so it only loads when someone previews or downloads):
 
-- `envelopePdf.ts`: loads `/sobre-template.pdf` once (cached `ArrayBuffer`), copies page 1, draws text with `Helvetica-Bold` at coordinates from `envelopeLayout.ts`:
+- `envelopeLayout.ts`: the template `/sobre-template.pdf` is **200 × 270 mm (567 × 765.36 pt), one page**, not A4. Each slot is `{ x, y, size, maxWidth }` (pdf-lib origin bottom-left, `y` = baseline) calibrated against the template's boxes:
     ```ts
     export const ENVELOPE_LAYOUT = {
         destinatario: {
-            receptorNumber: { x, y, size: 16 },
-            poblacion: { x, y, size: 14 },
-            provincia: { x, y, size: 14 },
+            receptorNumber: { x: 190, y: 498, size: 16, maxWidth: 325 },
+            poblacion: { x: 146, y: 455, size: 14, maxWidth: 370 },
+            provincia: { x: 142, y: 409, size: 14, maxWidth: 374 },
         },
-        remitente: { receptorNumber: { x, y, size: 11 }, poblacion: { x, y, size: 10 }, provincia: { x, y, size: 10 } },
+        remitente: {
+            receptorNumber: { x: 411, y: 136, size: 11, maxWidth: 106 },
+            poblacion: { x: 379, y: 103, size: 10, maxWidth: 138 },
+            provincia: { x: 375, y: 69, size: 10, maxWidth: 142 },
+        },
     };
     ```
-    Coordinates are calibrated once against the template (pdf-lib origin is bottom-left; page is A4 portrait). Long strings are shrunk to fit the box width.
-- `sheetPdf.ts` ("Hoja de intercambio", page 2): campaign name, fecha `dd/MM/yyyy`, REMITENTE/DESTINATARIO blocks, table of rows (`Número | Tipo | Cantidad | Series / Fracciones | Firmado`), totals in billetes and décimos, note, signature line.
-- `exchangePdf(exchange, from, to)` → `Uint8Array` (envelope + sheet). Preview in an `<iframe src={blobUrl}>` inside a dialog; download as `sobre-<receptorTo>-<numeroReceptorFrom>.pdf`.
-- `mergeExchangePdfs(list)` → one PDF with all outgoing exchanges (status pending/accepted) of the campaign, sorted by counterpart receptor number. Button "Descargar todos los sobres" in `/lista-control` and `/intercambios`. Option "Solo sobres" (skip sheets) for pure envelope printing.
-- `controlListPdf(controlList, me, campaign)` → A4 landscape table.
+    Long strings are shrunk (down to 6 pt) to fit `maxWidth`. Re-measure if the template changes.
+- `text.ts`: `safeText` (standard fonts only know WinAnsi — accents, º/ª, – and · are fine; anything else, e.g. emoji, becomes `?` instead of throwing), `fitSize`, `truncate` (ellipsis), `wrap`, `drawText` (left/right/center). `table.ts`: `drawTable` draws a zebra grid with a repeated header and adds pages via `onNewPage`.
+- `envelopePdf.ts`: `loadEnvelopeTemplate()` fetches the template once per session; `appendEnvelope(doc, from, to)` copies page 1 into `doc` and draws both blocks in `Helvetica-Bold`.
+- `sheetPdf.ts`: `appendSheet(doc, exchange)` — "Hoja de intercambio" on A4: campaign name, fecha `dd/MM/yyyy`, REMITENTE/DESTINATARIO blocks (receptor, name, población/provincia, address · phone · contact), table `Número | Tipo | Cantidad | Series / fracciones | Firmado` (row notes appended to the details cell), totals line (filas · décimos · billetes · firmados), wrapped note (max 6 lines), two signature lines. Long lists continue on further pages with a "(continuación)" header.
+- `exchangePdf.ts`: `exchangePdf(exchange, { onlyEnvelopes? })` → `Uint8Array` (envelope + sheet); `mergeExchangePdfs(exchanges, { onlyEnvelopes? })` → one PDF sorted by the receiver's receptor number (`compareReceptor`). With `onlyEnvelopes` summaries are enough; sheets need `ExchangeDetail` (rows). `exchangePdfFilename` → `sobre-<receptorTo>-<receptorFrom>.pdf`.
+- `controlListPdf.ts`: `controlListPdf(list, me, campaignName)` → A4 landscape: header with my data and the date, totals line, table with Doy/Recibo in billetes plus their status and the direction.
+- `hooks.ts`: `useExchangePdf()` (`previewExchange`, `downloadExchange`, `downloadAll({ onlyEnvelopes, campaignName })`, `preview` state for `PdfPreviewDialog`) and `useControlListDownloads()` (`pdf`, `csv`). `downloadAll` pages through `GET /exchanges?direction=out&status=pending|accepted` and fetches details (through the query cache) only when sheets are included. `PdfPreviewDialog` shows the bytes in an `<iframe>` with a download button.
+- `download.ts`: blob + `<a download>` click; `downloadPdf`, `downloadCsv`, `slugify` for filenames (`sobres-<campaña>.pdf`, `lista-control-<campaña>.pdf/.csv`).
 
-Downloads use a blob + `<a download>` click (normal browser download).
+CSV export of the control list is `controlListToCsv` in shared (§7): UTF-8 BOM, `;` separators, CRLF, `formatBilletes` decimals, totals appended after a blank line. The same function backs `GET /exchanges/control-list?format=csv`.
 
 ## 9. Deadline rule
 

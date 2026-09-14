@@ -73,7 +73,7 @@ client/src/
 │   ├── scanning/  {useBarcodeScanner.ts, CameraScannerDialog.tsx, ScannerStatus.tsx}
 │   ├── lottery/   {api.ts, hooks.ts (incl. useLotteryCheck), components/{LotteryImportDialog,LotteryTable,AddNumberForm}.tsx}
 │   ├── controlList/ {hooks.ts, components/ControlListTable.tsx, ControlListTotals.tsx}
-│   ├── pdf/       {envelopePdf.ts, envelopeLayout.ts, sheetPdf.ts, controlListPdf.ts, merge.ts, PdfPreviewDialog.tsx, download.ts}
+│   ├── pdf/       {envelopeLayout.ts, envelopePdf.ts, sheetPdf.ts, exchangePdf.ts (+ merge), controlListPdf.ts, text.ts, table.ts, hooks.ts, PdfPreviewDialog.tsx, download.ts}
 │   ├── dashboard/ {api.ts, hooks.ts, components/StatCard.tsx, LastExchangeCard.tsx, InstructionsCard.tsx}
 │   └── admin/     {api.ts, hooks.ts, components/…}
 ├── hooks/{useDebounce,useMediaQuery,useDocumentTitle}.ts
@@ -153,7 +153,9 @@ Header: counterpart `UserCard`, direction + status badges, dates. Read-only rows
 
 ### Lista de control `/lista-control`
 
-`ControlListTotals` cards (sobres a enviar / a recibir, billetes doy / recibo, borradores pendientes). `ControlListTable`: Nº receptor, Administración, Población, Provincia, Doy (billetes + estado), Recibo (billetes + estado), Dirección. Actions: Descargar PDF, Descargar CSV, Descargar todos los sobres (with "Solo sobres" switch).
+`ControlListTotals` cards (sobres a enviar / a recibir, billetes doy / recibo, borradores sin enviar — highlighted and linking to the drafts filter when > 0). `ControlListTable`: Nº receptor, Administración, Población, Provincia, Doy (billetes + estado, links to the exchange), Recibo (same), Dirección; cards under `md`. Header actions: Descargar PDF, Descargar CSV (both generated client-side from the cached `ControlList`). A "Sobres para imprimir" panel holds the "Solo sobres" switch and "Descargar todos los sobres (N)". `useControlList()` (`['control-list']`, `null` when no campaign) is invalidated by every exchange mutation.
+
+PDF actions on exchanges: `ExchangeActions` adds "Vista previa PDF" (opens `PdfPreviewDialog`) and "Descargar PDF" for the sender in both the dropdown and the detail-page buttons. `/intercambios` gets "Descargar todos los sobres" (envelopes + sheets) next to "Nuevo intercambio", enabled when the dashboard reports envelopes to send; the dashboard quick actions gain "Descargar sobres" pointing to `/lista-control`.
 
 ### Admin pages — see 07.
 

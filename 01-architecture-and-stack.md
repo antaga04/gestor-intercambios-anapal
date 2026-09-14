@@ -85,19 +85,19 @@ Dependencies: `zod@^3` (single copy for the workspace). Dev: `vitest`, `typescri
 
 ## `client/` — `@anapal/client`
 
-| Concern         | Choice                                                                                                   |
-| --------------- | -------------------------------------------------------------------------------------------------------- |
-| Build           | Vite 7, `@vitejs/plugin-react`, `@tailwindcss/vite`, alias `@` → `src`                                   |
-| UI              | React 19, TypeScript 5, Tailwind 4, shadcn (Tailwind 4 preset, `components.json` baseColor neutral, cssVariables), `lucide-react`, `sonner`, `tw-animate-css` |
-| Routing         | `react-router-dom@^7`, declarative `<BrowserRouter>/<Routes>` in JSX (reference pattern), `PrivateRoute` + `RoleRoute` outlet components |
-| Server state    | `@tanstack/react-query@^5` (+ devtools in dev)                                                           |
-| Forms           | `react-hook-form` + `@hookform/resolvers` + zod schemas from `@anapal/shared`                            |
-| HTTP            | `axios` instance (`lib/api.ts`) with `withCredentials`, base URL `import.meta.env.VITE_API_URL` (default `/api`), 401 → refresh interceptor (see 06) |
-| Dates/numbers   | `date-fns` + `date-fns/locale/es`, `Intl.NumberFormat('es-ES')`                                          |
-| PDFs            | `pdf-lib`                                                                                                |
-| Barcode camera  | `@zxing/browser` (+ native `BarcodeDetector` when present)                                               |
-| CSV             | `papaparse`                                                                                              |
-| Charts (admin)  | shadcn `chart` (recharts)                                                                                |
+| Concern        | Choice                                                                                                                                                        |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Build          | Vite 7, `@vitejs/plugin-react`, `@tailwindcss/vite`, alias `@` → `src`                                                                                        |
+| UI             | React 19, TypeScript 5, Tailwind 4, shadcn (Tailwind 4 preset, `components.json` baseColor neutral, cssVariables), `lucide-react`, `sonner`, `tw-animate-css` |
+| Routing        | `react-router-dom@^7`, declarative `<BrowserRouter>/<Routes>` in JSX (reference pattern), `PrivateRoute` + `RoleRoute` outlet components                      |
+| Server state   | `@tanstack/react-query@^5` (+ devtools in dev)                                                                                                                |
+| Forms          | `react-hook-form` + `@hookform/resolvers` + zod schemas from `@anapal/shared`                                                                                 |
+| HTTP           | `axios` instance (`lib/api.ts`) with `withCredentials`, base URL `import.meta.env.VITE_API_URL` (default `/api`), 401 → refresh interceptor (see 06)          |
+| Dates/numbers  | `date-fns` + `date-fns/locale/es`, `Intl.NumberFormat('es-ES')`                                                                                               |
+| PDFs           | `pdf-lib`                                                                                                                                                     |
+| Barcode camera | `@zxing/browser` (+ native `BarcodeDetector` when present)                                                                                                    |
+| CSV            | `papaparse`                                                                                                                                                   |
+| Charts (admin) | shadcn `chart` (recharts)                                                                                                                                     |
 
 `client/vercel.json`:
 
@@ -120,15 +120,15 @@ Assets: copy `favicon.ico`, `public/*` from this folder into `client/public/`; `
 
 ## `server/` — `@anapal/server`
 
-| Concern       | Choice                                                                                                  |
-| ------------- | ------------------------------------------------------------------------------------------------------- |
-| Runtime       | Node 22, ESM, TypeScript 5. Dev `tsx watch src/index.ts`, build `tsup` → `dist/index.js`               |
-| Framework     | `express@^5`, `cookie-parser`, `cors` (only for non-proxied dev origins), `helmet`, `express-rate-limit`, `request-ip` |
-| DB            | `mongoose@^8`, Mongo Atlas. Cached connection helper for serverless (`config/db.ts`)                     |
-| Auth          | `jsonwebtoken`, `bcrypt`, `crypto` (refresh token generation/hash)                                       |
-| Validation    | zod schemas from `@anapal/shared` via `validate({ body?, query?, params? })` middleware                  |
-| Email         | `resend`, HTML templates in `server/templates/` (copied to dist by tsup `onSuccess`)                     |
-| Env           | `dotenv`; `config/env.ts` parses `process.env` with zod and fails fast                                   |
+| Concern    | Choice                                                                                                                 |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Runtime    | Node 22, ESM, TypeScript 5. Dev `tsx watch src/index.ts`, build `tsup` → `dist/index.js`                               |
+| Framework  | `express@^5`, `cookie-parser`, `cors` (only for non-proxied dev origins), `helmet`, `express-rate-limit`, `request-ip` |
+| DB         | `mongoose@^8`, Mongo Atlas. Cached connection helper for serverless (`config/db.ts`)                                   |
+| Auth       | `jsonwebtoken`, `bcrypt`, `crypto` (refresh token generation/hash)                                                     |
+| Validation | zod schemas from `@anapal/shared` via `validate({ body?, query?, params? })` middleware                                |
+| Email      | `resend`, HTML templates in `server/templates/` (copied to dist by tsup `onSuccess`)                                   |
+| Env        | `dotenv`; `config/env.ts` parses `process.env` with zod and fails fast                                                 |
 
 Folder structure:
 

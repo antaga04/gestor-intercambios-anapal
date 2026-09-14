@@ -17,8 +17,8 @@ we will have roles: superadmin just me the dev (configure by hand), admin, user.
 - profile
 - exchanges: list of exchanges with some basic filters, search and actions
 - exchanges/:id
-  - new: for creating
-  - /:id for looking an exchange
+    - new: for creating
+    - /:id for looking an exchange
 - my lottery: import and show their numbers
 
 ## logic
@@ -53,16 +53,16 @@ we can manually add rows there must be 2 other ways. scanning with a bar code sc
 ### more logic
 
 - emails only and for register verification
-  - for reset password no email, we will manage this with the admin panel, the user will request forgot password and the admin will set one for them, later the user will be able to change their password in the profile
+    - for reset password no email, we will manage this with the admin panel, the user will request forgot password and the admin will set one for them, later the user will be able to change their password in the profile
 - we use refresh tokens to avoid at any cost sending emails, we only have 3000 per month
 - for each exchange we can:
-  - edit
-  - view
-  - delete
-  - preview a pdf of the data and donwload it
+    - edit
+    - view
+    - delete
+    - preview a pdf of the data and donwload it
 - download all of the pdfs (template in public directory)
 - list of the control of exchange of the user
-  - to know how many envelopes the user gives and how many they recieve back. not just that but a full list of the exchanges that shows basic info and if they recieve, give or both for that row
+    - to know how many envelopes the user gives and how many they recieve back. not just that but a full list of the exchanges that shows basic info and if they recieve, give or both for that row
 
 ## details
 

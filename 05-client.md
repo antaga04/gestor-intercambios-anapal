@@ -6,42 +6,47 @@ Vite + React 19 + TypeScript. Spanish-only UI. shadcn components, lucide icons, 
 
 ```tsx
 <BrowserRouter>
-  <Routes>
-    <Route element={<PublicLayout />}>                        {/* header with logo + Entrar/Registro, footer */}
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/registro" element={<RegisterPage />} />
-      <Route path="/verificar-email" element={<VerifyEmailPage />} />        {/* ?token= */}
-      <Route path="/reenviar-verificacion" element={<ResendVerificationPage />} />
-      <Route path="/olvide-contrasena" element={<ForgotPasswordPage />} />
-      <Route path="/aviso-legal" element={<LegalPage />} />
-    </Route>
-
-    <Route element={<PrivateRoute />}>                        {/* redirects to /login with toast */}
-      <Route element={<AppLayout />}>                         {/* shadcn Sidebar + header + <Outlet/> */}
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/perfil" element={<ProfilePage />} />
-        <Route path="/intercambios" element={<ExchangesListPage />} />
-        <Route path="/intercambios/nuevo" element={<ExchangeEditorPage mode="create" />} />
-        <Route path="/intercambios/:id" element={<ExchangeDetailPage />} />
-        <Route path="/intercambios/:id/editar" element={<ExchangeEditorPage mode="edit" />} />
-        <Route path="/mi-loteria" element={<MyLotteryPage />} />
-        <Route path="/lista-control" element={<ControlListPage />} />
-
-        <Route element={<RoleRoute roles={['admin', 'superadmin']} />}>
-          <Route path="/admin" element={<AdminDashboardPage />} />
-          <Route path="/admin/usuarios" element={<AdminUsersPage />} />
-          <Route path="/admin/usuarios/:id" element={<AdminUserDetailPage />} />
-          <Route path="/admin/solicitudes" element={<AdminPasswordRequestsPage />} />
-          <Route element={<RoleRoute roles={['superadmin']} />}>
-            <Route path="/admin/campanas" element={<AdminCampaignsPage />} />
-          </Route>
+    <Routes>
+        <Route element={<PublicLayout />}>
+            {' '}
+            {/* header with logo + Entrar/Registro, footer */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/registro" element={<RegisterPage />} />
+            <Route path="/verificar-email" element={<VerifyEmailPage />} /> {/* ?token= */}
+            <Route path="/reenviar-verificacion" element={<ResendVerificationPage />} />
+            <Route path="/olvide-contrasena" element={<ForgotPasswordPage />} />
+            <Route path="/aviso-legal" element={<LegalPage />} />
         </Route>
-      </Route>
-    </Route>
 
-    <Route path="*" element={<NotFoundPage />} />
-  </Routes>
+        <Route element={<PrivateRoute />}>
+            {' '}
+            {/* redirects to /login with toast */}
+            <Route element={<AppLayout />}>
+                {' '}
+                {/* shadcn Sidebar + header + <Outlet/> */}
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/perfil" element={<ProfilePage />} />
+                <Route path="/intercambios" element={<ExchangesListPage />} />
+                <Route path="/intercambios/nuevo" element={<ExchangeEditorPage mode="create" />} />
+                <Route path="/intercambios/:id" element={<ExchangeDetailPage />} />
+                <Route path="/intercambios/:id/editar" element={<ExchangeEditorPage mode="edit" />} />
+                <Route path="/mi-loteria" element={<MyLotteryPage />} />
+                <Route path="/lista-control" element={<ControlListPage />} />
+                <Route element={<RoleRoute roles={['admin', 'superadmin']} />}>
+                    <Route path="/admin" element={<AdminDashboardPage />} />
+                    <Route path="/admin/usuarios" element={<AdminUsersPage />} />
+                    <Route path="/admin/usuarios/:id" element={<AdminUserDetailPage />} />
+                    <Route path="/admin/solicitudes" element={<AdminPasswordRequestsPage />} />
+                    <Route element={<RoleRoute roles={['superadmin']} />}>
+                        <Route path="/admin/campanas" element={<AdminCampaignsPage />} />
+                    </Route>
+                </Route>
+            </Route>
+        </Route>
+
+        <Route path="*" element={<NotFoundPage />} />
+    </Routes>
 </BrowserRouter>
 ```
 
@@ -94,12 +99,15 @@ client/src/
 ## Pages
 
 ### Landing `/`
+
 Hero with `logotipo.png`, campaign name, `drawDate` and `exchangeDeadline` (`formatDate`), countdown to the deadline, `landingText` rendered as paragraphs, "Cómo funciona" 3-step cards (Registra tu administración → Crea intercambios → Imprime sobres y lista de control), CTA buttons Entrar / Registrarse. If no active campaign: "Próximamente".
 
 ### Login / Registro / Verificar email / Reenviar verificación / Olvidé mi contraseña
+
 Card forms (RHF + zod). Registro fields: email, contraseña (+ confirmación), nº de receptor, nombre de la administración, población, provincia (`Select` with provinces + "Otra"), dirección, teléfono, persona de contacto. After registro: "Te hemos enviado un email para verificar tu cuenta" + link to reenviar. Verificar: reads `?token=`, calls API, shows result + "Ir a entrar". Olvidé contraseña: email input → always success message "Un administrador se pondrá en contacto contigo para asignarte una contraseña temporal".
 
 ### Dashboard `/dashboard`
+
 - `CampaignBanner`: name, sorteo date, deadline (red when < 7 days, "Plazo cerrado" when past).
 - `mustChangePassword` alert → link to `/perfil`.
 - Stat cards (2×4 grid, stack on mobile): Sobres a enviar, Sobres a recibir, Billetes que doy (`formatBilletes(decimosOut)`), Billetes que recibo, Pendientes en bandeja (highlight when > 0), Intercambios aceptados, Borradores, Números en mi lotería.
@@ -108,9 +116,11 @@ Card forms (RHF + zod). Registro fields: email, contraseña (+ confirmación), n
 - "Instrucciones" collapsible with the same 3 steps as landing + scanning tips.
 
 ### Perfil `/perfil`
+
 Two cards: Datos públicos (`ProfileForm`, note "Estos datos los verán otras administraciones y se imprimen en los sobres"; receptor number read-only with hint to contact an admin) and Cambiar contraseña (`ChangePasswordForm`, highlighted when `mustChangePassword`).
 
 ### Intercambios `/intercambios`
+
 - Tabs: **Enviados** (`direction=out`), **Recibidos** (`direction=in`), **Bandeja** (inbox, pending only, unread dot).
 - Filters row: search (`q`, debounced), status `Select`, sort. URL-synced via `useSearchParams`.
 - `ExchangeTable` columns: Administración (receptor nº + name + población), Dirección (`DirectionBadge` Da/Recibe/Ambos), Estado (`StatusBadge`), Filas, Billetes, Firmados (count), Actualizado (`dd/MM/yyyy HH:mm`), Acciones (`DropdownMenu`: Ver, Editar, Enviar, PDF, Descargar, Eliminar / for received: Ver, Aceptar, Rechazar).
@@ -118,31 +128,37 @@ Two cards: Datos públicos (`ProfileForm`, note "Estos datos los verán otras ad
 - Mobile: cards instead of table (`useMediaQuery`).
 
 ### Nuevo / Editar `/intercambios/nuevo`, `/intercambios/:id/editar`
+
 Single page, two sections:
 
 1. **Destinatario** — `UserPicker` (`Command` popover: search by receptor nº / name / población via `GET /users?q=`), shows `UserCard` once picked; in edit mode read-only. Warning if an exchange with that user already exists (409 → link to it). Shows reverse-direction info: "Esta administración ya te envía un sobre (aceptado)" when `counterpart` exists.
 2. **Lotería** — `RowTable` (editable rows) + `RowEditor` (inline form at the bottom or dialog on mobile):
-   - `RowTypeSelect` (segmented: Billete / 1 décimo / Varios décimos). Type is sticky between rows.
-   - Fields by type: número (5-digit masked input, auto-pad on blur), cantidad (hidden for `decimo`; auto for `billete` when series given; auto for `decimos` when items given), `SeriesFields` (serie desde / hasta) for billete, serie + fracción for decimo, `DecimosItemsField` (chips list of `serie/fracción` with add/remove) for decimos, `Checkbox` Firmado, nota.
-   - Inline validation from `validateRow`; lottery warnings (amber) from `useLotteryCheck`.
-   - `ScannerStatus`: "Escáner conectado — escanea un décimo" (keyboard wedge always listening while editor is open) + button "Cámara" opening `CameraScannerDialog`. Scans go through `mergeScanIntoRow`; events drive toasts ("Serie inicial 35", "Rango 35–74 · 40 billetes", "Décimo añadido (3)", "Ya escaneado", "Nuevo número detectado").
-   - `ExchangeTotals` footer: filas, décimos, **billetes** (bold, primary), firmados.
-   - Sticky bottom bar: Guardar borrador · Guardar y enviar (create) / Guardar cambios (edit; warns "El destinatario tendrá que aceptar de nuevo" when status is accepted).
+    - `RowTypeSelect` (segmented: Billete / 1 décimo / Varios décimos). Type is sticky between rows.
+    - Fields by type: número (5-digit masked input, auto-pad on blur), cantidad (hidden for `decimo`; auto for `billete` when series given; auto for `decimos` when items given), `SeriesFields` (serie desde / hasta) for billete, serie + fracción for decimo, `DecimosItemsField` (chips list of `serie/fracción` with add/remove) for decimos, `Checkbox` Firmado, nota.
+    - Inline validation from `validateRow`; lottery warnings (amber) from `useLotteryCheck`.
+    - `ScannerStatus`: "Escáner conectado — escanea un décimo" (keyboard wedge always listening while editor is open) + button "Cámara" opening `CameraScannerDialog`. Scans go through `mergeScanIntoRow`; events drive toasts ("Serie inicial 35", "Rango 35–74 · 40 billetes", "Décimo añadido (3)", "Ya escaneado", "Nuevo número detectado").
+    - `ExchangeTotals` footer: filas, décimos, **billetes** (bold, primary), firmados.
+    - Sticky bottom bar: Guardar borrador · Guardar y enviar (create) / Guardar cambios (edit; warns "El destinatario tendrá que aceptar de nuevo" when status is accepted).
+
 - Unsaved-changes guard (`useBlocker`).
 - Form state: RHF `useFieldArray` for rows, zod `exchangeInputSchema` resolver; draft autosave to `sessionStorage` keyed by `to` (restored on reload).
 
 ### Detalle `/intercambios/:id`
+
 Header: counterpart `UserCard`, direction + status badges, dates. Read-only rows table with totals. Note. Actions by role/status (from 03 §3): owner → Editar, Enviar, Cancelar, Eliminar, Vista previa PDF, Descargar PDF; receiver + pending → Aceptar / Rechazar (dialog with optional motivo). If a reverse exchange exists: card "Intercambio de vuelta" linking to it. Opening as receiver marks it seen.
 
 ### Mi lotería `/mi-loteria`
+
 `PageHeader` actions: Importar (dialog with dropzone + textarea paste + preview table + "Importar N números"), Añadir número (inline form), Vaciar lista (confirm). `LotteryTable`: número, series (ranges as "35–74, 80"), origen, eliminar. Count + hint "Se usará para avisarte si añades un número que no tienes".
 
 ### Lista de control `/lista-control`
+
 `ControlListTotals` cards (sobres a enviar / a recibir, billetes doy / recibo, borradores pendientes). `ControlListTable`: Nº receptor, Administración, Población, Provincia, Doy (billetes + estado), Recibo (billetes + estado), Dirección. Actions: Descargar PDF, Descargar CSV, Descargar todos los sobres (with "Solo sobres" switch).
 
 ### Admin pages — see 07.
 
 ### 404
+
 Logo, "Página no encontrada", link to `/` or `/dashboard`.
 
 ## Forms and validation
@@ -156,10 +172,11 @@ Logo, "Página no encontrada", link to `/` or `/dashboard`.
 ```ts
 export const formatDate = (d) => format(d, 'dd/MM/yyyy', { locale: es });
 export const formatDateTime = (d) => format(d, 'dd/MM/yyyy HH:mm', { locale: es });
-export const formatRelative = (d) => formatDistanceToNow(d, { locale: es, addSuffix: true });   // "hace 3 días"
+export const formatRelative = (d) => formatDistanceToNow(d, { locale: es, addSuffix: true }); // "hace 3 días"
 export const formatInt = (n) => new Intl.NumberFormat('es-ES').format(n);
 export { formatBilletes } from '@anapal/shared/lottery/amounts';
 ```
+
 `<html lang="es">`, `document.title` = "<Página> · Intercambios ANAPAL".
 
 ## Scanning UX details

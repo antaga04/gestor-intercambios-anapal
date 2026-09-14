@@ -6,5 +6,8 @@ export * from './schemas/campaign';
 export * from './types/api';
 export * from './types/user';
 export * from './types/campaign';
+export * from './types/exchange';
+export * from './types/dashboard';
 export * from './messages/es';
 export * from './lottery/amounts';
+export * from './lottery/direction';

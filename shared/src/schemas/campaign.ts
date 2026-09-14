@@ -26,7 +26,8 @@ export const createCampaignSchema = z
         path: ['exchangeDeadline'],
         message: 'La fecha límite debe ser anterior o igual a la del sorteo',
     });
-export type CreateCampaignInput = z.infer<typeof createCampaignSchema>;
+/** Parsed (server) shape: dates are `Date`. The wire shape is `CreateCampaignBody` in types/campaign.ts. */
+export type CreateCampaignInput = z.output<typeof createCampaignSchema>;
 
 export const updateCampaignSchema = z
     .object({
@@ -38,4 +39,4 @@ export const updateCampaignSchema = z
         landingText: z.string().trim().max(4000).nullable().optional(),
     })
     .strict();
-export type UpdateCampaignInput = z.infer<typeof updateCampaignSchema>;
+export type UpdateCampaignInput = z.output<typeof updateCampaignSchema>;

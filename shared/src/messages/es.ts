@@ -51,6 +51,9 @@ export const MESSAGES_ES = {
     'user.sessions_revoked': 'Sesiones cerradas.',
     'user.cannot_modify_superadmin': 'No se puede modificar la cuenta de superadministrador.',
 
+    // dashboard
+    'dashboard.ok': 'OK',
+
     // campaign
     'campaign.none_active': 'No hay ninguna campaña activa.',
     'campaign.closed': 'El plazo de intercambio de esta campaña ha terminado.',

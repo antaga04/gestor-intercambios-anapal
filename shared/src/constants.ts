@@ -10,6 +10,9 @@ export type ExchangeStatus = (typeof EXCHANGE_STATUS)[number];
 /** Statuses that count as "live" when computing the direction of a pair. */
 export const LIVE_EXCHANGE_STATUS: readonly ExchangeStatus[] = ['draft', 'pending', 'accepted'];
 
+export const PAIR_DIRECTIONS = ['da', 'recibe', 'ambos'] as const;
+export type PairDirection = (typeof PAIR_DIRECTIONS)[number];
+
 export const ROW_TYPES = ['billete', 'decimo', 'decimos'] as const;
 export type RowType = (typeof ROW_TYPES)[number];
 

@@ -9,6 +9,7 @@ import { requestId } from '@/middlewares/requestId';
 import { errorHandler, notFoundHandler } from '@/middlewares/errorHandler';
 import { asyncHandler } from '@/utils/asyncHandler';
 import { healthCheck } from '@/api/controllers/health';
+import { generalLimiter } from '@/middlewares/rateLimiters';
 
 export function createApp(): Express {
     const app = express();
@@ -47,7 +48,7 @@ export function createApp(): Express {
         }),
     );
 
-    app.use('/api', mainRouter);
+    app.use('/api', generalLimiter, mainRouter);
 
     app.use(notFoundHandler);
     app.use(errorHandler);

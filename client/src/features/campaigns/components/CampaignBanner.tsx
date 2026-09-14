@@ -11,8 +11,8 @@ export function CampaignBanner() {
     if (isLoading) return <Skeleton className="h-20 w-full" />;
     if (!campaign) {
         return (
-            <Card className="border-dashed">
-                <CardContent className="py-4 text-sm text-muted-foreground">
+            <Card className="border-dashed py-4">
+                <CardContent className="text-sm text-muted-foreground">
                     No hay ninguna campaña activa todavía.
                 </CardContent>
             </Card>
@@ -23,8 +23,8 @@ export function CampaignBanner() {
     const urgent = !closed && days <= 7;
 
     return (
-        <Card className={cn(closed && 'border-destructive/50', urgent && 'border-primary/60')}>
-            <CardContent className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <Card className={cn('py-4', closed && 'border-destructive/50', urgent && 'border-primary/60')}>
+            <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-3">
                     <h2 className="text-lg font-semibold">{campaign.name}</h2>
                     {closed ? (

@@ -115,12 +115,14 @@ export function LandingPage() {
                 <div className="grid gap-4 md:grid-cols-3">
                     {STEPS.map((s, i) => (
                         <Card key={s.title}>
-                            <CardHeader className="flex-row items-center gap-3 space-y-0">
-                                <span className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-                                    <s.icon className="size-5" />
-                                </span>
-                                <CardTitle className="text-base">
-                                    {i + 1}. {s.title}
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-3 text-base">
+                                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                                        <s.icon className="size-5" />
+                                    </span>
+                                    <span>
+                                        {i + 1}. {s.title}
+                                    </span>
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="text-sm text-muted-foreground">{s.text}</CardContent>

@@ -9,11 +9,13 @@ import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { LandingPage } from '@/pages/LandingPage';
 import { LegalPage } from '@/pages/LegalPage';
 import { LoginPage } from '@/pages/LoginPage';
+import { NewExchangePage } from '@/pages/NewExchangePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { ResendVerificationPage } from '@/pages/ResendVerificationPage';
 import { VerifyEmailPage } from '@/pages/VerifyEmailPage';
+import { AdminCampaignsPage } from '@/pages/admin/AdminCampaignsPage';
 
 export function AppRouter() {
     return (
@@ -37,7 +39,7 @@ export function AppRouter() {
                         <Route path="/perfil" element={<ProfilePage />} />
                         {/* Phase 4–7 */}
                         <Route path="/intercambios" element={<ComingSoonPage title="Intercambios" />} />
-                        <Route path="/intercambios/nuevo" element={<ComingSoonPage title="Nuevo intercambio" />} />
+                        <Route path="/intercambios/nuevo" element={<NewExchangePage />} />
                         <Route path="/intercambios/:id" element={<ComingSoonPage title="Intercambio" />} />
                         <Route
                             path="/intercambios/:id/editar"
@@ -55,7 +57,7 @@ export function AppRouter() {
                                 element={<ComingSoonPage title="Solicitudes de contraseña" />}
                             />
                             <Route element={<RoleRoute roles={['superadmin']} />}>
-                                <Route path="/admin/campanas" element={<ComingSoonPage title="Campañas" />} />
+                                <Route path="/admin/campanas" element={<AdminCampaignsPage />} />
                             </Route>
                         </Route>
                     </Route>

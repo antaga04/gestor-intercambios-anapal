@@ -18,6 +18,7 @@ import {
 import { Logo } from '@/components/common/Logo';
 import { useAuth } from '@/features/auth/hooks';
 import { useActiveCampaign } from '@/features/campaigns/hooks';
+import { useDashboard } from '@/features/dashboard/hooks';
 import { ADMIN_NAV, MAIN_NAV, type NavItem } from '@/lib/constants';
 
 function NavEntry({ item, badge }: { item: NavItem; badge?: number }) {
@@ -38,9 +39,11 @@ function NavEntry({ item, badge }: { item: NavItem; badge?: number }) {
     );
 }
 
-export function AppSidebar({ inboxCount = 0 }: { inboxCount?: number }) {
+export function AppSidebar() {
     const { user, logout } = useAuth();
     const { data: campaign } = useActiveCampaign();
+    const { data: dashboard } = useDashboard();
+    const inboxCount = dashboard?.inboxPending ?? 0;
     const adminItems = ADMIN_NAV.filter((i) => user && (user.role === 'superadmin' || i.roles.includes(user.role)));
 
     return (

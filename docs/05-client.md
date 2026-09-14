@@ -74,7 +74,7 @@ client/src/
 │   ├── lottery/   {api.ts, hooks.ts, components/LotteryImportDialog.tsx, LotteryTable.tsx, useLotteryCheck.ts}
 │   ├── controlList/ {hooks.ts, components/ControlListTable.tsx, ControlListTotals.tsx}
 │   ├── pdf/       {envelopePdf.ts, envelopeLayout.ts, sheetPdf.ts, controlListPdf.ts, merge.ts, PdfPreviewDialog.tsx, download.ts}
-│   ├── dashboard/ {api.ts, hooks.ts, components/StatCard.tsx, QuickActions.tsx, LastExchangeCard.tsx}
+│   ├── dashboard/ {api.ts, hooks.ts, components/StatCard.tsx, LastExchangeCard.tsx, InstructionsCard.tsx}
 │   └── admin/     {api.ts, hooks.ts, components/…}
 ├── hooks/{useDebounce,useMediaQuery,useDocumentTitle}.ts
 ├── lib/{api.ts (axios), queryClient.ts, format.ts (dates/numbers), messages.ts (re-export es map + resolve()), utils.ts (cn), constants.ts (provinces list, nav items)}

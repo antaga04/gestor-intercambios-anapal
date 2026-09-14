@@ -107,6 +107,8 @@ The rule of record for transitions is 03 §3.
 
 ### Dashboard — `/dashboard` (🔐, `activeCampaign`)
 
+Implemented in Phase 3 (`server/src/api/services/dashboard.ts`), two `$group` aggregations (one per direction) plus three counts:
+
 ```ts
 GET /dashboard → {
     campaign: { _id, name, drawDate, exchangeDeadline, isClosed },
@@ -117,6 +119,7 @@ GET /dashboard → {
     envelopesToSend: number, envelopesToReceive: number,
     lastExchange: exchangeSummary | null,                             // most recently updated, any direction
     lotteryCount: number,
+    adminPendingRequests?: number,   // admins only: pending password reset requests
 }
 ```
 

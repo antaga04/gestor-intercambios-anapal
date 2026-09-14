@@ -60,18 +60,22 @@ Steps
 
 1. `GET /users` search + `UserPicker` (Command popover) + `UserCard`.
 2. `GET /dashboard` service (aggregations) and dashboard cards / quick actions / instructions.
-3. Admin campaign endpoints (👑) — minimal, so campaigns can be managed early.
+3. Admin campaigns page (👑): list + create/edit dialog over the endpoints added in Phase 1.
+
+> Implemented here too (needed by the dashboard aggregation): the `Exchange` and `LotteryNumber` models
+> (docs/02), the `toExchangeSummary` mapper, `pairDirection` in shared, and demo exchanges in `pnpm seed --demo`.
+> Their services/routes still belong to Phases 4–5.
 
 Done when
 
-- [ ] Searching "28" or "Alcalá" finds admons; self and non-active users excluded.
-- [ ] Dashboard shows zeros correctly for a fresh user and the deadline banner states.
+- [x] Searching "28" or "Alcalá" finds admons; self and non-active users excluded.
+- [x] Dashboard shows zeros correctly for a fresh user and the deadline banner states.
 
 ## Phase 4 — Mi lotería
 
 Steps
 
-1. Shared `schemas/lottery.ts`; model `lotteryNumber`; routes/services (`list`, `import` with upsert + series merge, `create`, `delete`, `clear`, `check`).
+1. Shared `schemas/lottery.ts`; (model `lotteryNumber` already exists from Phase 3); routes/services (`list`, `import` with upsert + series merge, `create`, `delete`, `clear`, `check`).
 2. Client: `LotteryImportDialog` (papaparse, preview, chunked upload), `LotteryTable`, manual add, `useLotteryCheck` (local lookup over cached list).
 
 Done when
@@ -84,7 +88,7 @@ Done when
 Steps
 
 1. Shared: `lottery/amounts.ts`, `lottery/rows.ts` (`validateRow`, `mergeScanIntoRow` skeleton), `schemas/exchange.ts` (discriminated union + refinements), messages for `exchange.*`. Vitest for amounts and row validation (all rule rows in 03 §2).
-2. Model `exchange` with row subdocument, `pre('validate')` recompute, indexes.
+2. (Model `exchange` already exists from Phase 3.) Add row-level zod validation on write paths.
 3. Service: create (with counterpart linking), update (status effects), send, cancel, accept, reject, delete (unlink), get (mark seen), list (filters, populate public users, computed `direction`), inbox.
 4. Routes/controllers with `activeCampaign` + `requireOpenCampaign`.
 5. Client: `features/exchanges` — list page with tabs/filters (URL-synced), `ExchangeTable` + mobile cards, editor page (`UserPicker`, `RowTable`, `RowEditor` with type-specific fields, totals, sticky bar, autosave draft, unsaved guard), detail page with actions and accept/reject dialogs, inbox tab + sidebar badge.

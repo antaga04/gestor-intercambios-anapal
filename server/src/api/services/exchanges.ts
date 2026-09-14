@@ -144,11 +144,15 @@ export async function update(scope: Scope, id: string, input: ExchangeUpdateInpu
 export async function send(scope: Scope, id: string): Promise<ExchangeDetail> {
     const exchange = await findOr404(id, scope.campaign);
     assertOwner(exchange, scope.actor);
-    assertStatus(exchange, ['draft']);
+    // A rejected or cancelled envelope can be sent again without editing it first.
+    assertStatus(exchange, ['draft', 'rejected', 'cancelled']);
     if (exchange.rows.length === 0) throw new AppError(400, 'exchange.no_rows', 'Cannot send an empty exchange');
 
     exchange.status = 'pending';
     exchange.sentAt = new Date();
+    exchange.respondedAt = null;
+    exchange.rejectReason = null;
+    exchange.seenByReceiverAt = null;
     await exchange.save();
     return detail(exchange, scope);
 }

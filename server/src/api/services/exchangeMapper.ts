@@ -25,6 +25,9 @@ export function toExchangeSummary(
     viewerId: string,
     counterpartStatus?: ExchangeStatus,
 ): ExchangeSummary {
+    const counterpartId = exchange.counterpart
+        ? String((exchange.counterpart as { _id?: unknown })._id ?? exchange.counterpart)
+        : undefined;
     const from = asPublicUser(exchange.from);
     const to = asPublicUser(exchange.to);
     const viewerGives = from._id === viewerId;
@@ -44,6 +47,7 @@ export function toExchangeSummary(
         to,
         direction: viewerGives ? pairDirection(mine, theirs) : pairDirection(theirs, mine),
         counterpartStatus: visibleCounterpartStatus,
+        counterpartId: visibleCounterpartStatus ? counterpartId : undefined,
         sentAt: exchange.sentAt?.toISOString(),
         respondedAt: exchange.respondedAt?.toISOString(),
         seenByReceiverAt: exchange.seenByReceiverAt?.toISOString(),

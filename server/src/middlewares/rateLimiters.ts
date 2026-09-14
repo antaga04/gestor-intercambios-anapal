@@ -39,7 +39,8 @@ function createLimiter(windowMs: number, limit: number, extra: Partial<Options> 
 const MIN = 60_000;
 
 export const generalLimiter = createLimiter(1 * MIN, 120);
-export const authLimiter = createLimiter(15 * MIN, 10);
+// Only failed attempts count: several admons may share a computer, and a successful login is not abuse.
+export const authLimiter = createLimiter(15 * MIN, 10, { skipSuccessfulRequests: true });
 export const resendLimiter = createLimiter(60 * MIN, 3);
 export const refreshLimiter = createLimiter(1 * MIN, 20);
 export const importLimiter = createLimiter(10 * MIN, 20);

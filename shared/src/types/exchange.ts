@@ -31,6 +31,8 @@ export interface ExchangeSummary {
     /** Relative to the viewer: `da` = I give, `recibe` = I receive, `ambos` = both directions exist. */
     direction: PairDirection;
     counterpartStatus?: ExchangeStatus;
+    /** Id of the reverse exchange, when the viewer may know it exists. */
+    counterpartId?: string;
     sentAt?: string;
     respondedAt?: string;
     seenByReceiverAt?: string;

@@ -167,8 +167,10 @@ Steps
 2. Vercel project `server` (root `server`), env vars from `.env.dist`; verify `https://<server>.vercel.app/api/health`.
 3. Vercel project `client` (root `client`), set the server URL in `vercel.json` rewrite (or via env-substituted build step), `VITE_API_URL=/api`.
 4. Resend: verify sending domain, set `EMAIL_FROM`; run `pnpm seed` against production DB (superadmin only, no `--demo`).
-5. README: description, stack, local setup, env tables, deploy steps, seeding, "cómo funciona el intercambio" summary, limits (emails).
-6. Smoke test checklist in README: register/verify/login on prod, create+send+accept an exchange between two test admons, print an envelope, admin reset password, deadline behaviour.
+5. ~~README: description, stack, local setup, env tables, deploy steps, seeding, "cómo funciona el intercambio" summary, limits (emails).~~ Done.
+6. ~~Smoke test checklist in README.~~ Done — the checklist is the last section of the README; tick it on the production deploy.
+
+> Steps 1–4 need the Atlas, Vercel and Resend accounts; everything the repo can prepare (vercel.json files, env templates, seed, README) is in place.
 
 Done when
 

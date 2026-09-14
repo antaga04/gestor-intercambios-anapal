@@ -59,7 +59,7 @@ client/src/
 ├── main.tsx                      # createRoot, globals.css, QueryClientProvider, Toaster, App
 ├── app/
 │   ├── App.tsx / router.tsx
-│   ├── providers.tsx             # QueryClient, AuthProvider, ThemeProvider
+│   ├── providers.tsx             # ThemeProvider (in-house, `components/theme-provider.tsx`), QueryClient, AuthProvider, Toaster
 │   └── guards/{PrivateRoute,RoleRoute}.tsx
 ├── components/
 │   ├── ui/                       # shadcn generated (button, input, card, dialog, sheet, sidebar, table, tabs, badge, select, checkbox, dropdown-menu, form, sonner, skeleton, tooltip, command, popover, alert, separator, chart …)

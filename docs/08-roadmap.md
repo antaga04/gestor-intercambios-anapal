@@ -50,9 +50,9 @@ Steps
 
 Done when
 
-- [ ] Full auth journey works in the browser; refreshing the page keeps the session; expired access token is transparent; logout redirects.
-- [ ] Sidebar navigation works on desktop and mobile; dark mode toggles; all strings Spanish; dates `dd/MM/yyyy`.
-- [ ] Zod errors from the server appear under the right inputs.
+- [x] Full auth journey works in the browser; refreshing the page keeps the session; expired access token is transparent; logout redirects.
+- [x] Sidebar navigation works on desktop and mobile; dark mode toggles; all strings Spanish; dates `dd/MM/yyyy`.
+- [x] Zod errors from the server appear under the right inputs.
 
 ## Phase 3 — Users directory, campaigns, dashboard data
 

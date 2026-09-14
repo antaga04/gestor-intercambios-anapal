@@ -51,6 +51,16 @@ export const MESSAGES_ES = {
     'user.sessions_revoked': 'Sesiones cerradas.',
     'user.cannot_modify_superadmin': 'No se puede modificar la cuenta de superadministrador.',
 
+    // lottery
+    'lottery.list': 'OK',
+    'lottery.not_found': 'Ese número no está en tu lista.',
+    'lottery.imported': 'Lista de lotería actualizada.',
+    'lottery.added': 'Número añadido a tu lotería.',
+    'lottery.removed': 'Número eliminado de tu lotería.',
+    'lottery.cleared': 'Se ha vaciado tu lista de lotería.',
+    'lottery.limit_reached': 'Has alcanzado el máximo de números guardados.',
+    'lottery.checked': 'OK',
+
     // dashboard
     'dashboard.ok': 'OK',
 

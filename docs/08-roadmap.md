@@ -113,9 +113,9 @@ Steps
 
 Done when
 
-- [ ] With a USB/Bluetooth scanner: scanning two décimos of the same number in `billete` mode fills serie desde/hasta in either order and sets cantidad; in `decimos` mode each scan appends a chip and duplicates are rejected; scanning another number commits and opens a new row.
-- [ ] Camera dialog reads a real décimo on a phone (iOS Safari + Android Chrome) and shows the decoded toast.
-- [ ] Typing 20 digits by hand does not trigger the wedge listener.
+- [ ] With a USB/Bluetooth scanner: scanning two décimos of the same number in `billete` mode fills serie desde/hasta in either order and sets cantidad; in `decimos` mode each scan appends a chip and duplicates are rejected; scanning another number commits and opens a new row. _(row logic covered by `scan.test.ts`; needs a physical scanner to tick)_
+- [ ] Camera dialog reads a real décimo on a phone (iOS Safari + Android Chrome) and shows the decoded toast. _(needs a phone and a real décimo to tick)_
+- [x] Typing 20 digits by hand does not trigger the wedge listener (`keyboardWedge.test.ts`).
 
 ## Phase 7 — Control list and PDFs
 

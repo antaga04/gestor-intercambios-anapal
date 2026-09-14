@@ -137,6 +137,7 @@ Digit layout of the 20-digit code (0-based positions):
 Tests (`shared/src/__tests__/decodeDecimo.test.ts`): a fixture set of raw strings (with and without separators, longer than 20 digits, shorter than 20, non-digit noise) and expected outputs; `null` cases.
 
 `campaign.barcode` (`{ dayDigit, jornada }`): when set, a scan whose `dia`/`jornada` don't match yields the warning `scan.campaign_mismatch` ("Este décimo no parece ser del sorteo de esta campaña") but is still usable.
+Implemented as `scanMatchesCampaign(scan, barcode)` next to the decoder (leading zeros in `jornada` are tolerated); `describeScan(scan)` renders the `numero · serie X · fracción Y` line used by every scan toast.
 
 ## 5. Scanning
 
@@ -146,11 +147,11 @@ Two input sources produce the same `DecimoDecodificado`, then `mergeScanIntoRow`
 
 `client/src/hooks/useBarcodeScanner({ enabled, onScan })`:
 
-- Global `keydown` listener while the row editor is open and `enabled`.
-- Buffers printable characters; a burst is accepted when ≥ 20 digits arrive with < 50 ms between keys and ends with `Enter` (or 120 ms of silence). Human typing never satisfies this.
-- Clears the buffer on timeout; ignores events when focus is in a `textarea`.
+- Global `keydown` listener (capture phase) while the row editor is open and `enabled`.
+- Buffers printable characters; a burst is accepted when ≥ 20 digits arrive with ≤ 50 ms between keys and ends with `Enter`/`Tab` (or 120 ms of silence). Human typing never satisfies this. The burst rules are a pure state machine in `shared/src/lottery/keyboardWedge.ts` (`wedgeKey`, `wedgeEnd`, `WEDGE` thresholds), unit-tested; the hook only adds the DOM glue.
+- A scanner types into whatever is focused, so the hook remembers the focused text input and its value when a burst starts and, once the burst proves to be a scan, restores that value (native setter + `input` event, flushed with `flushSync`) and swallows the terminator key. Bursts that turn out to be typing are left untouched. Ignores events when focus is in a `textarea`, when a modifier key is held, or while a dialog other than the camera one is open.
 - Calls `onScan(decodeDecimo(buffer))`; shows toast `scan.unreadable` if decoding fails.
-- UI shows a small "Escáner listo" indicator with a pulse on each accepted scan.
+- UI (`ScannerStatus`) shows a small "Escáner listo" indicator with a pulse on each accepted scan and the "Cámara" button.
 
 ### 5.2 Device camera
 
@@ -160,10 +161,11 @@ Two input sources produce the same `DecimoDecodificado`, then `mergeScanIntoRow`
 - `navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })`, camera selector if several.
 - Debounces identical reads (same raw within 1.5 s). Beep + haptic (`navigator.vibrate`) on success.
 - "Modo continuo" toggle: keep the dialog open and keep scanning (useful for `decimos` and `billete` ranges).
+- Loaded lazily (`React.lazy`) from `RowEditor`: ZXing is ~460 kB and only the camera path needs it. If the native detector exists but its first `detect()` rejects (browsers that expose the API without a backend), the dialog switches to ZXing on the fly. Permission/hardware errors show `scan.camera_unavailable`; a browser without `getUserMedia` shows `scan.camera_unsupported`.
 
 ### 5.3 Scan → row behaviour (by selected row type)
 
-`mergeScanIntoRow(row: RowDraft, scan: DecimoDecodificado): { row: RowDraft; event: ScanEvent }`
+`mergeScanIntoRow<T extends ScanRow>(row: T, scan: ScanInput): { row: T; event: ScanEvent }` — generic over the flat `ScanRow` shape (`numero`, `type`, `quantity`, `serieFrom/To`, `serie`, `fraccion`, `items`) so the client's `RowDraft` passes through with its `key`/`signed`/`note` untouched. `describeScanEvent(event, row)` gives the toast title for each event.
 
 | Selected type | Scan of numero N                                                                                                                                                                                                                                                                         |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -171,6 +173,8 @@ Two input sources produce the same `DecimoDecodificado`, then `mergeScanIntoRow`
 | `decimo`      | `numero = N`, `serie`, `fraccion`, `quantity = 1` (event `set`). A second scan overwrites.                                                                                                                                                                                               |
 | `decimos`     | Row empty → `numero = N`, `items = [{serie, fraccion}]`, `quantity = 1`. Same N → append if pair not present (event `appended`), else event `duplicate` (toast "Ya has escaneado este décimo"). `quantity = items.length`.                                                               |
 | any           | Different numero than the current row → the editor commits the current row (if valid) and opens a new row of the same type with the scan applied (event `new_row`). If the current row is invalid, toast `scan.finish_row_first`.                                                        |
+
+The pure function only reports `new_row` together with the fresh row; `RowEditor` decides whether the previous row can be committed (`onCommit` returns `false` when the page rejects it, e.g. duplicate número, and the scan is then dropped with `scan.finish_row_first`). A `duplicate` event leaves the row untouched. Codes `scan.*` live in `messages/es.ts` next to the API codes so toasts share one dictionary.
 
 Scanned values pre-fill the same inputs the user could type, so manual correction is always possible.
 

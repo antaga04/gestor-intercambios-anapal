@@ -70,16 +70,17 @@ shared/
     │   └── common.ts           # objectIdSchema, paginationQuerySchema, numeroSchema, serieSchema, fraccionSchema
     ├── types/                  # z.infer exports + API envelope types (ApiSuccess, ApiError, Paginated<T>)
     ├── lottery/
-    │   ├── decodeDecimo.ts     # user-provided decoder (see 03)
+    │   ├── decodeDecimo.ts     # user-provided decoder (see 03) + scanMatchesCampaign, describeScan
+    │   ├── keyboardWedge.ts    # pure burst detector for keyboard-wedge scanners (wedgeKey / wedgeEnd)
     │   ├── amounts.ts          # toBilletes, formatBilletes, rowAmountDecimos, exchangeTotalDecimos
     │   ├── direction.ts        # pairDirection(gives, receives)
     │   ├── series.ts           # normalizeSeries, mergeSeries, seriesContains, countSeries, formatSeries
     │   ├── parseLotteryList.ts # CSV/TXT/pasted list → rows + per-line issues
-    │   ├── rows.ts             # validateRow, mergeScanIntoRow (pure scan-to-row logic)
+    │   ├── rows.ts             # validateRow, mergeScanIntoRow + describeScanEvent (pure scan-to-row logic)
     │   └── controlList.ts      # buildControlList(exchanges, meId)
     ├── messages/
     │   └── es.ts               # Record<ApiCode, string> — Spanish text for every server `i18n` code
-    └── __tests__/              # vitest: decodeDecimo, amounts, rows, controlList
+    └── __tests__/              # vitest: decodeDecimo, keyboardWedge, scan, amounts, rows, series, parseLotteryList, controlList
 ```
 
 Scripts: `test` (vitest run), `typecheck` (tsc --noEmit), `lint` (eslint).

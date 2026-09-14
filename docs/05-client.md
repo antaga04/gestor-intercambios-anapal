@@ -62,7 +62,7 @@ client/src/
 │   ├── providers.tsx             # ThemeProvider (in-house, `components/theme-provider.tsx`), QueryClient, AuthProvider, Toaster
 │   └── guards/{PrivateRoute,RoleRoute}.tsx
 ├── components/
-│   ├── ui/                       # shadcn generated (button, input, card, dialog, sheet, sidebar, table, tabs, badge, select, checkbox, dropdown-menu, form, sonner, skeleton, tooltip, command, popover, alert, separator, chart …)
+│   ├── ui/                       # shadcn generated (button, input, card, dialog, sheet, sidebar, table, tabs, badge, select, checkbox, switch, dropdown-menu, form, sonner, skeleton, tooltip, command, popover, alert, separator, chart …)
 │   ├── layout/{PublicLayout,AppLayout,AppSidebar,AppHeader,PageHeader,ThemeToggle}.tsx
 │   └── common/{DataTable,EmptyState,ConfirmDialog,StatusBadge,DirectionBadge,UserCard,BilletesAmount,DateText,CopyButton}.tsx
 ├── features/
@@ -181,9 +181,10 @@ export { formatBilletes } from '@anapal/shared/lottery/amounts';
 
 ## Scanning UX details
 
-- `useBarcodeScanner` is mounted only by `RowEditor`; disabled while a `Dialog` other than the camera one is open.
-- Camera dialog requests permission lazily; shows a hint if denied. Works on iOS Safari (uses `playsInline`).
-- A decoded scan always shows a small toast with `numero · serie X · fracción Y` so the user can verify what was read.
+- `useBarcodeScanner` is mounted only by `RowEditor` (always enabled there); it skips bursts while a `[role="dialog"]` other than the camera one (`data-scanner-dialog`) is open, so the `UserPicker` popover and confirm dialogs are safe.
+- Camera dialog (`CameraScannerDialog`, lazy-loaded) requests permission lazily; shows the error inside the preview if denied. Works on iOS Safari (uses `playsInline`). Camera `Select` appears only when more than one `videoinput` is enumerated; "Modo continuo" `Switch` keeps it open and shows a reads counter with the last decoded line.
+- A decoded scan always shows a toast whose description is `numero · serie X · fracción Y` so the user can verify what was read; the title is the scan event ("Serie inicial 35…", "Rango 35–74 · 40 billetes", "Décimo añadido (3)", "Ya has escaneado este décimo", "Nuevo número detectado: 99999"). Campaign mismatch adds a separate warning toast.
+- `RowEditor`'s `onCommit` returns a boolean so a scan of a different número never drops the current row silently.
 
 ## PWA / assets
 

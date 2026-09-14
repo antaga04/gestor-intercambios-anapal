@@ -140,8 +140,8 @@ Single page, two sections:
     - `ExchangeTotals` footer: filas, décimos, **billetes** (bold, primary), firmados.
     - Sticky bottom bar: Guardar borrador · Guardar y enviar (create) / Guardar cambios (edit; warns "El destinatario tendrá que aceptar de nuevo" when status is accepted).
 
-- Unsaved-changes guard (`useBlocker`).
-- Form state: RHF `useFieldArray` for rows, zod `exchangeInputSchema` resolver; draft autosave to `sessionStorage` keyed by `to` (restored on reload).
+- Row state is local (`RowDraft[]` + the row being edited) rather than RHF `useFieldArray`: rows are added through a sub-editor and Phase 6's scanner pushes into the same state. `validateRow` from shared drives the inline errors, which appear as soon as the número has 5 digits so a disabled "Añadir fila" always explains itself.
+- No `sessionStorage` autosave and no `useBlocker`: drafts live on the server ("Guardar borrador"), which is the real recovery mechanism, and `useBlocker` needs a data router.
 
 ### Detalle `/intercambios/:id`
 

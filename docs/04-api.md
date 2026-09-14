@@ -87,7 +87,8 @@ Shapes:
 ```ts
 exchangeSummary = {
     _id, status, totalDecimos, rowCount, signedRowCount, sentAt, respondedAt, seenByReceiverAt, updatedAt,
-    from: publicUser, to: publicUser, direction: 'da' | 'recibe' | 'ambos', counterpartStatus?: ExchangeStatus,
+    from: publicUser, to: publicUser, direction: 'da' | 'recibe' | 'ambos',
+    counterpartStatus?: ExchangeStatus, counterpartId?: string,   // omitted while the reverse exchange is the other party's draft
 }
 exchangeDetail = exchangeSummary & { rows: ExchangeRow[], note?, rejectReason?, campaign: { _id, name, exchangeDeadline } }
 ```

@@ -68,7 +68,9 @@ Client evaluates this locally against `GET /lottery` (cached by TanStack Query).
 | seen              | receiver        | any status, first open                                                                      | `seenByReceiverAt` if empty                                                             |
 | admin edit/delete | admin+          | any                                                                                         | same as owner, deadline ignored                                                         |
 
-A `rejected` or `cancelled` exchange can be edited by the owner and re-sent (goes back to `pending`) — simpler than forcing a new document, and the unique index stays satisfied.
+A `rejected` or `cancelled` exchange can be re-sent as it is (`send` accepts those statuses, clearing the previous answer) or edited first — editing resets it to `draft`. Simpler than forcing a new document, and the unique index stays satisfied.
+
+**Drafts are private to their sender.** The receiver cannot open one (403 `exchange.forbidden`), incoming lists filter them out, and `counterpartStatus` is hidden from the other party while the reverse exchange is still a draft — otherwise an unsent envelope would leak.
 
 ### Direction of a pair (computed)
 

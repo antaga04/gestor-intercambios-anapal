@@ -75,7 +75,7 @@ Email budget safeguards:
 - `helmet()` with defaults (API only, no CSP needed for JSON). `app.disable('x-powered-by')`.
 - `express.json({ limit: '1mb' })`; lottery import chunked to keep bodies small.
 - CORS: only in dev when the client is served from another origin (`CLIENT_URL`) with `credentials: true`; in production the proxy makes it same-origin, so CORS middleware can be skipped or restricted to `CLIENT_URL`.
-- Rate limits per 04. Key = `USER-<id>` if authenticated else hashed IP + UA (reference approach with `request-ip`).
+- Rate limits per 04; the auth tier uses `skipSuccessfulRequests` so shared office computers are not locked out by normal logins while brute force still is. Key = `USER-<id>` if authenticated else hashed IP + UA (reference approach with `request-ip`).
 - All ids validated with `objectIdSchema` before hitting Mongo. Ownership checks in services, never in controllers alone.
 - Zod `strict()` on request bodies to reject unknown fields (prevents mass assignment: `role`, `status`, `amountDecimos`…).
 - Errors in production never include stack traces; 500s are logged with a request id (`crypto.randomUUID()` attached by a tiny middleware and returned in `X-Request-Id`).

@@ -96,11 +96,11 @@ Steps
 
 Done when
 
-- [ ] Creating A→B as draft, sending, B sees it in Bandeja (unread dot), accepts → status accepted on both sides.
-- [ ] B creates B→A → both detail pages show "Ambos" and link each other; deleting one clears the link.
-- [ ] Row rules enforced: duplicate número, series count mismatch, items count mismatch, fracción 11 → rejected with field-level messages; totals show `2,4 billetes` for 24 décimos.
-- [ ] Editing an accepted exchange returns it to pending; deadline passed → user gets `campaign.closed`, admin does not.
-- [ ] Lottery warnings appear only when the user has a list.
+- [x] Creating A→B as draft, sending, B sees it in Bandeja (unread dot), accepts → status accepted on both sides.
+- [x] B creates B→A → both detail pages show "Ambos" and link each other; deleting one clears the link.
+- [x] Row rules enforced: duplicate número, series count mismatch, items count mismatch, fracción 11 → rejected with field-level messages; totals show `2,4 billetes` for 24 décimos.
+- [x] Editing an accepted exchange returns it to pending; deadline passed → user gets `campaign.closed`, admin does not.
+- [x] Lottery warnings appear only when the user has a list.
 
 ## Phase 6 — Scanning
 

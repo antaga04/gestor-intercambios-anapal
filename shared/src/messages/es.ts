@@ -51,6 +51,27 @@ export const MESSAGES_ES = {
     'user.sessions_revoked': 'Sesiones cerradas.',
     'user.cannot_modify_superadmin': 'No se puede modificar la cuenta de superadministrador.',
 
+    // exchange
+    'exchange.list': 'OK',
+    'exchange.detail': 'OK',
+    'exchange.not_found': 'Intercambio no encontrado.',
+    'exchange.forbidden': 'No participas en este intercambio.',
+    'exchange.not_owner': 'Solo quien envía el intercambio puede modificarlo.',
+    'exchange.not_receiver': 'Solo quien lo recibe puede aceptarlo o rechazarlo.',
+    'exchange.self': 'No puedes intercambiar contigo mismo.',
+    'exchange.exists': 'Ya tienes un intercambio con esa administración en esta campaña.',
+    'exchange.duplicate_numero': 'Hay números repetidos en el intercambio.',
+    'exchange.no_rows': 'Añade al menos un número antes de enviar.',
+    'exchange.invalid_transition': 'No se puede hacer esa acción con el estado actual del intercambio.',
+    'exchange.created': 'Intercambio creado.',
+    'exchange.updated': 'Intercambio actualizado.',
+    'exchange.updated_needs_acceptance': 'Intercambio actualizado. La otra administración deberá aceptarlo de nuevo.',
+    'exchange.deleted': 'Intercambio eliminado.',
+    'exchange.sent': 'Intercambio enviado.',
+    'exchange.cancelled': 'Intercambio cancelado.',
+    'exchange.accepted': 'Intercambio aceptado.',
+    'exchange.rejected': 'Intercambio rechazado.',
+
     // lottery
     'lottery.list': 'OK',
     'lottery.not_found': 'Ese número no está en tu lista.',

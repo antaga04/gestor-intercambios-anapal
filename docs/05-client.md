@@ -34,7 +34,7 @@ Vite + React 19 + TypeScript. Spanish-only UI. shadcn components, lucide icons, 
                 <Route path="/mi-loteria" element={<MyLotteryPage />} />
                 <Route path="/lista-control" element={<ControlListPage />} />
                 <Route element={<RoleRoute roles={['admin', 'superadmin']} />}>
-                    <Route path="/admin" element={<AdminDashboardPage />} />
+                    <Route path="/admin" element={<AdminPanelPage />} />
                     <Route path="/admin/usuarios" element={<AdminUsersPage />} />
                     <Route path="/admin/usuarios/:id" element={<AdminUserDetailPage />} />
                     <Route path="/admin/solicitudes" element={<AdminPasswordRequestsPage />} />
@@ -158,6 +158,8 @@ Header: counterpart `UserCard`, direction + status badges, dates. Read-only rows
 PDF actions on exchanges: `ExchangeActions` adds "Vista previa PDF" (opens `PdfPreviewDialog`) and "Descargar PDF" for the sender in both the dropdown and the detail-page buttons. `/intercambios` gets "Descargar todos los sobres" (envelopes + sheets) next to "Nuevo intercambio", enabled when the dashboard reports envelopes to send; the dashboard quick actions gain "Descargar sobres" pointing to `/lista-control`.
 
 ### Admin pages — see 07.
+
+Implementation notes: `features/admin/{api,hooks}.ts` cover every `/admin/*` endpoint (query keys under `['admin', …]`; user mutations invalidate users, requests, stats and the dashboard). Components: `ExchangesChart` (inline SVG line chart, two validated series, crosshair tooltip, legend, "Ver tabla" toggle — no chart library), `TopUsersTable`, `CampaignSelect` (only rendered when there is more than one campaign), `AdminUsersTable` (+ `LastSeen` tooltip), `AdminUserActions` (dropdown or buttons: contraseña temporal, activar/bloquear, cerrar sesiones, 👑 hacer/quitar admin — each behind a `ConfirmDialog`; superadmin and self are never manageable), `SetPasswordDialog` (generated password via `lib/password.ts`, copy button, "Comunícasela por teléfono"), `AdminUserForm` (RHF, includes receptor number), `UserStatusBadge`/`RoleBadge` with labels in `lib/labels.ts`. `components/common/Pagination` is shared by every paginated list. `ExchangeDetailPage` falls back to `GET /admin/exchanges/:id` for admins when the exchange is not in the active campaign, and `ExchangeActions` offers Editar/Eliminar/PDF to admins who are not a party.
 
 ### 404
 

@@ -155,9 +155,9 @@ Steps
 
 Done when
 
-- [ ] Admin can find a user, set a temporary password (request resolved, user forced to change), block/unblock (session cut), download their control list, and open any exchange.
-- [ ] Superadmin can create next year's campaign and activate it; exchanges of the old campaign stay visible via the campaign selector.
-- [ ] Non-admin hitting `/admin/*` gets redirected; API returns 403.
+- [x] Admin can find a user, set a temporary password (request resolved, user forced to change), block/unblock (session cut), download their control list, and open any exchange.
+- [x] Superadmin can create next year's campaign and activate it; exchanges of the old campaign stay visible via the campaign selector (`?campaign=` on stats, user exchanges and control list).
+- [x] Non-admin hitting `/admin/*` gets redirected (`RoleRoute`); API returns 403 `auth.forbidden`.
 
 ## Phase 10 — Deploy and hand-off
 

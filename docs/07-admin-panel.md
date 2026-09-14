@@ -24,7 +24,9 @@ AdminStats = {
 }
 ```
 
-Layout: 4 stat cards per row (users, exchanges, billetes, sobres), a line chart (exchanges per day, shadcn chart), two small tables (top givers / receivers), alert card with pending password requests and email budget usage (progress bar).
+Layout: 4 stat cards per row (users, exchanges, billetes, sobres), a line chart (exchanges per day — an inline SVG component rather than the recharts-based shadcn chart, to keep the bundle small), two small tables (top givers / receivers), alert with pending password requests and a card with email budget usage (progress bars) plus activity counters.
+
+`emails.today` sums the users' rolling-24 h verification counters; `emails.thisMonth` sums lifetime `verificationEmailsSent` of users emailed this month (docs/06: "exact enough"). `exchanges.bidirectionalPairs` counts live exchanges whose counterpart is also live, halved.
 
 Campaign selector (top-right) lets admins look at past campaigns.
 

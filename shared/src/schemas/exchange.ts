@@ -96,3 +96,8 @@ export const exchangeQuerySchema = paginationQuerySchema.extend({
     sort: z.enum(['updatedAt', 'counterpart', 'total']).default('updatedAt'),
 });
 export type ExchangeQuery = z.infer<typeof exchangeQuerySchema>;
+
+export const controlListQuerySchema = z.object({
+    format: z.enum(['json', 'csv']).default('json'),
+});
+export type ControlListQuery = z.infer<typeof controlListQuerySchema>;

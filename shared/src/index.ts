@@ -19,3 +19,4 @@ export * from './lottery/parseLotteryList';
 export * from './lottery/rows';
 export * from './lottery/decodeDecimo';
 export * from './lottery/keyboardWedge';
+export * from './lottery/controlList';

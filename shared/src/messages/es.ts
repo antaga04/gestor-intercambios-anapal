@@ -53,6 +53,7 @@ export const MESSAGES_ES = {
 
     // exchange
     'exchange.list': 'OK',
+    'exchange.control_list': 'OK',
     'exchange.detail': 'OK',
     'exchange.not_found': 'Intercambio no encontrado.',
     'exchange.forbidden': 'No participas en este intercambio.',

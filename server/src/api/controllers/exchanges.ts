@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
-import type { ExchangeInput, ExchangeQuery, ExchangeUpdateInput } from '@anapal/shared';
+import type { ControlListQuery, ExchangeInput, ExchangeQuery, ExchangeUpdateInput } from '@anapal/shared';
+import { controlListToCsv } from '@anapal/shared';
 import * as exchangesService from '@/api/services/exchanges';
 import { getQuery } from '@/middlewares/validate';
 import { asyncHandler } from '@/utils/asyncHandler';
@@ -18,6 +19,18 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
 export const inbox = asyncHandler(async (req: Request, res: Response) => {
     const payload = await exchangesService.inbox(scopeOf(req));
     return sendSuccess(res, 200, { i18n: 'exchange.list', message: 'OK', payload });
+});
+
+export const controlList = asyncHandler(async (req: Request, res: Response) => {
+    const { format } = getQuery<ControlListQuery>(req);
+    const payload = await exchangesService.controlList(req.campaign!._id, req.user!.id);
+    if (format === 'csv') {
+        const slug = req.campaign!.name.replace(/[^\w-]+/g, '-').replace(/^-|-$/g, '');
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="lista-control-${slug}.csv"`);
+        return res.send(controlListToCsv(payload));
+    }
+    return sendSuccess(res, 200, { i18n: 'exchange.control_list', message: 'OK', payload });
 });
 
 export const getOne = asyncHandler(async (req: Request, res: Response) => {

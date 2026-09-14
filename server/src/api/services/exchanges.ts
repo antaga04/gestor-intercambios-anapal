@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 import type {
+    ControlList,
     ExchangeDetail,
     ExchangeInput,
     ExchangeQuery,
@@ -9,6 +10,7 @@ import type {
     Paginated,
     Role,
 } from '@anapal/shared';
+import { buildControlList } from '@anapal/shared';
 import { Exchange, type ExchangeDocument } from '@/api/models/exchange';
 import { PUBLIC_USER_FIELDS, User } from '@/api/models/user';
 import type { CampaignDocument } from '@/api/models/campaign';
@@ -261,6 +263,11 @@ export async function allForUser(campaign: Types.ObjectId, userId: string): Prom
         .sort({ updatedAt: -1 })
         .populate(POPULATE);
     return items.map((e) => toExchangeSummary(e, userId, counterpartStatusOf(e)));
+}
+
+/** "Lista de control" of a user in a campaign (docs/03 §7). Admins call it for any user. */
+export async function controlList(campaign: Types.ObjectId, userId: string): Promise<ControlList> {
+    return buildControlList(await allForUser(campaign, userId), userId);
 }
 
 function detail(exchange: ExchangeDocument, { actor, campaign }: Scope): ExchangeDetail {

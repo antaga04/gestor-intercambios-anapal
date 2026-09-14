@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import {
+    controlListQuerySchema,
     exchangeInputSchema,
     exchangeQuerySchema,
     exchangeRejectSchema,
@@ -19,6 +20,7 @@ router.use(authenticate, activeCampaign);
 
 router.get('/', validate({ query: exchangeQuerySchema }), exchanges.list);
 router.get('/inbox', exchanges.inbox);
+router.get('/control-list', validate({ query: controlListQuerySchema }), exchanges.controlList);
 router.post('/', requireOpenCampaign, validate({ body: exchangeInputSchema }), exchanges.create);
 
 router.get('/:id', withId, exchanges.getOne);

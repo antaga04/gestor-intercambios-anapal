@@ -9,8 +9,10 @@ import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
 import { LandingPage } from '@/pages/LandingPage';
 import { LegalPage } from '@/pages/LegalPage';
 import { LoginPage } from '@/pages/LoginPage';
+import { ExchangeDetailPage } from '@/pages/ExchangeDetailPage';
+import { ExchangeEditorPage } from '@/pages/ExchangeEditorPage';
+import { ExchangesListPage } from '@/pages/ExchangesListPage';
 import { MyLotteryPage } from '@/pages/MyLotteryPage';
-import { NewExchangePage } from '@/pages/NewExchangePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { RegisterPage } from '@/pages/RegisterPage';
@@ -38,14 +40,11 @@ export function AppRouter() {
                     <Route element={<AppLayout />}>
                         <Route path="/dashboard" element={<DashboardPage />} />
                         <Route path="/perfil" element={<ProfilePage />} />
-                        {/* Phase 4–7 */}
-                        <Route path="/intercambios" element={<ComingSoonPage title="Intercambios" />} />
-                        <Route path="/intercambios/nuevo" element={<NewExchangePage />} />
-                        <Route path="/intercambios/:id" element={<ComingSoonPage title="Intercambio" />} />
-                        <Route
-                            path="/intercambios/:id/editar"
-                            element={<ComingSoonPage title="Editar intercambio" />}
-                        />
+                        <Route path="/intercambios" element={<ExchangesListPage />} />
+                        <Route path="/intercambios/nuevo" element={<ExchangeEditorPage mode="create" />} />
+                        <Route path="/intercambios/:id" element={<ExchangeDetailPage />} />
+                        <Route path="/intercambios/:id/editar" element={<ExchangeEditorPage mode="edit" />} />
+                        {/* Phase 7 */}
                         <Route path="/mi-loteria" element={<MyLotteryPage />} />
                         <Route path="/lista-control" element={<ComingSoonPage title="Lista de control" />} />
                         {/* Phase 9 */}

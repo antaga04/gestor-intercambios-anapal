@@ -14,9 +14,9 @@ Steps
 
 Done when
 
-- [ ] `pnpm install && pnpm typecheck && pnpm lint && pnpm test` pass.
-- [ ] `pnpm dev` serves client on :5173 with the orange theme and server on :8000 answering `/api/health`; client proxy `/api` works.
-- [ ] `pnpm build` produces `client/dist` and `server/dist/index.js` that bundles shared code.
+- [x] `pnpm install && pnpm typecheck && pnpm lint && pnpm test` pass.
+- [x] `pnpm dev` serves client on :5173 with the orange theme and server on :8000 answering `/api/health`; client proxy `/api` works.
+- [x] `pnpm build` produces `client/dist` and `server/dist/index.js` that bundles shared code.
 
 ## Phase 1 — Server core
 

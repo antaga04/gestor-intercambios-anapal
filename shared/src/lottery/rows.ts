@@ -177,3 +177,109 @@ export const ROW_TYPE_LABELS: Record<RowType, string> = {
     decimo: '1 décimo',
     decimos: 'Varios décimos',
 };
+
+// ---------------------------------------------------------------------------------------------
+// Scanning (docs/03 §5.3)
+// ---------------------------------------------------------------------------------------------
+
+/** The flat shape the editor keeps while a row is being written; the client's `RowDraft` extends it. */
+export interface ScanRow {
+    numero: string;
+    type: RowType;
+    quantity: number;
+    serieFrom?: number;
+    serieTo?: number;
+    serie?: number;
+    fraccion?: number;
+    items: SerieFraccion[];
+}
+
+export type ScanEvent =
+    /** billete: first serie of a range captured. */
+    | 'series_start'
+    /** billete: second scan closed the range (in either order). */
+    | 'series_end'
+    /** decimo: serie and fracción set (a later scan overwrites). */
+    | 'set'
+    /** decimos: a new serie/fracción pair appended. */
+    | 'appended'
+    /** decimos: that serie/fracción was already in the row; nothing changed. */
+    | 'duplicate'
+    /** Different número than the row being edited: the returned row is the fresh one for it. */
+    | 'new_row';
+
+export interface ScanInput {
+    numero: string;
+    serie: string | number;
+    fraccion: string | number;
+}
+
+/** Row details cleared and número taken from the scan; everything else (type, flags…) untouched. */
+function freshFromScan<T extends ScanRow>(row: T, numero: string): T {
+    return {
+        ...row,
+        numero,
+        quantity: 1,
+        serieFrom: undefined,
+        serieTo: undefined,
+        serie: undefined,
+        fraccion: undefined,
+        items: [],
+    };
+}
+
+function applyScan<T extends ScanRow>(row: T, serie: number, fraccion: number): { row: T; event: ScanEvent } {
+    if (row.type === 'billete') {
+        const { serieFrom, serieTo } = row;
+        // First scan, or a third one after a closed range: (re)start the range with this serie.
+        if (serieFrom === undefined || serieTo !== undefined) {
+            return { row: { ...row, serieFrom: serie, serieTo: undefined, quantity: 1 }, event: 'series_start' };
+        }
+        const from = Math.min(serieFrom, serie);
+        const to = Math.max(serieFrom, serie);
+        return { row: { ...row, serieFrom: from, serieTo: to, quantity: to - from + 1 }, event: 'series_end' };
+    }
+    if (row.type === 'decimo') {
+        return { row: { ...row, serie, fraccion, quantity: 1 }, event: 'set' };
+    }
+    if (row.items.some((i) => i.serie === serie && i.fraccion === fraccion)) {
+        return { row, event: 'duplicate' };
+    }
+    const items = [...row.items, { serie, fraccion }];
+    return { row: { ...row, items, quantity: items.length }, event: 'appended' };
+}
+
+/**
+ * Applies a decoded décimo to the row being edited. Pure: the caller decides what to do on
+ * `new_row` (commit the previous row if valid, otherwise keep it and warn).
+ */
+export function mergeScanIntoRow<T extends ScanRow>(row: T, scan: ScanInput): { row: T; event: ScanEvent } {
+    const serie = Number(scan.serie);
+    const fraccion = Number(scan.fraccion);
+    if (row.numero !== '' && row.numero !== scan.numero) {
+        const next = applyScan(freshFromScan(row, scan.numero), serie, fraccion);
+        return { row: next.row, event: 'new_row' };
+    }
+    const target = row.numero === '' ? freshFromScan(row, scan.numero) : row;
+    return applyScan(target, serie, fraccion);
+}
+
+/** Toast title for a scan event, e.g. "Rango 35–74 · 40 billetes". */
+export function describeScanEvent(event: ScanEvent, row: ScanRow): string {
+    switch (event) {
+        case 'series_start':
+            return `Serie inicial ${row.serieFrom}. Escanea la última serie del rango.`;
+        case 'series_end':
+            return row.serieFrom === row.serieTo
+                ? `Serie ${row.serieFrom} · 1 billete`
+                : `Rango ${row.serieFrom}–${row.serieTo} · ${row.quantity} billetes`;
+        case 'set':
+            return `Serie ${row.serie} · fracción ${row.fraccion}`;
+        case 'appended':
+            return `Décimo añadido (${row.items.length})`;
+        case 'duplicate':
+            return 'Ya has escaneado este décimo';
+        case 'new_row':
+            return `Nuevo número detectado: ${row.numero}`;
+    }
+}

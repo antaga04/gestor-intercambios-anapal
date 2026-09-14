@@ -17,3 +17,5 @@ export * from './lottery/direction';
 export * from './lottery/series';
 export * from './lottery/parseLotteryList';
 export * from './lottery/rows';
+export * from './lottery/decodeDecimo';
+export * from './lottery/keyboardWedge';

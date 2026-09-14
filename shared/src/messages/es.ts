@@ -95,6 +95,14 @@ export const MESSAGES_ES = {
     'campaign.detail': 'OK',
     'campaign.created': 'Campaña creada.',
     'campaign.updated': 'Campaña actualizada.',
+
+    // scanning (client-side codes, kept here so toasts share one dictionary)
+    'scan.unreadable': 'No se ha podido leer el código. Inténtalo de nuevo.',
+    'scan.campaign_mismatch': 'Este décimo no parece ser del sorteo de esta campaña.',
+    'scan.finish_row_first': 'Completa o corrige la fila actual antes de escanear otro número.',
+    'scan.duplicate': 'Ya has escaneado este décimo.',
+    'scan.camera_unavailable': 'No se ha podido acceder a la cámara. Revisa los permisos del navegador.',
+    'scan.camera_unsupported': 'Este navegador no permite escanear con la cámara.',
 } as const satisfies Record<string, string>;
 
 export type ApiCode = keyof typeof MESSAGES_ES;

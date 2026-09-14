@@ -136,10 +136,9 @@ Folder structure:
 server/
 ├── api/index.ts                 # Vercel entry: `import app from '../dist/index.js'; export default app;`
 ├── vercel.json                  # { "version": 2, "rewrites": [{ "source": "/(.*)", "destination": "/api" }] }
-├── tsup.config.ts               # entry src/index.ts, esm, noExternal: ['@anapal/shared'], onSuccess: cp templates
+├── tsup.config.ts               # entry src/index.ts, esm, noExternal: ['@anapal/shared']
 ├── tsconfig.json                # paths @/* → src/*
 ├── .env.dist
-├── templates/verify-email.html
 └── src/
     ├── index.ts                 # app bootstrap; app.listen only if !process.env.VERCEL
     ├── app.ts                   # express app factory (middlewares, routes, error handler)
@@ -149,10 +148,11 @@ server/
     │   ├── controllers/<same names>.ts     # parse req → call service → sendSuccess
     │   ├── services/<same names>.ts        # business rules, ownership checks, throws AppError
     │   └── models/{user,campaign,exchange,lotteryNumber,refreshToken,passwordResetRequest}.ts
-    ├── middlewares/{authenticate,authorize,validate,rateLimiters,errorHandler}.ts
-    ├── utils/{response,AppError,asyncHandler,jwt,password,tokens,email,pagination}.ts
+    ├── middlewares/{authenticate,authorize,validate,rateLimiters,campaign,errorHandler,requestId}.ts
+    ├── utils/{response,AppError,asyncHandler,jwt,password,tokens,cookies,email,pagination}.ts
+    ├── templates/verifyEmail.ts
     ├── types/{express.d.ts,model.ts}
-    └── seed/{index.ts,superadmin.ts,demo.ts}
+    └── seed/{index.ts,superadmin.ts,campaign.ts,demo.ts}
 ```
 
 Scripts: `dev`, `build`, `start` (node dist/index.js), `seed` (tsx src/seed/index.ts), `lint`, `typecheck`.

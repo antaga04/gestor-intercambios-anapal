@@ -42,21 +42,21 @@ Why `Lax` works: the client Vercel project rewrites `/api/*` to the server proje
 
 ### Revocation triggers (server)
 
-- Password change by the user → revoke all other refresh tokens of that user (keep current session).
+- Password change by the user → revoke all other refresh-token families of that user (the current family is carried in the access JWT).
 - Admin sets temporary password → revoke all.
 - Admin blocks user → revoke all; `authenticate` also re-checks `status` cheaply (cached 60 s per user id) so a blocked user is cut off within a minute even with a valid access token.
 
 ## Registration and email verification
 
 1. `POST /auth/register` → validate with `registerSchema`; email lowercased; check uniqueness of email and receptor number (both 409, distinct codes). Create user `status: 'pending'`.
-2. Sign verification JWT `{ sub, purpose: 'verify-email' }` with `EMAIL_CONFIRMATION_SECRET`, TTL 24 h. Send with Resend from `EMAIL_FROM`, template `server/templates/verify-email.html` (`{{name}}`, `{{link}}` = `${CLIENT_URL}/verificar-email?token=…`). Increment `verificationEmailsSent`, set `lastVerificationEmailAt`. If Resend fails → still 201 but respond `email.send_failed` message variant so the UI offers "Reenviar".
+2. Sign verification JWT `{ sub, purpose: 'verify-email' }` with `EMAIL_CONFIRMATION_SECRET`, TTL 24 h. Send with Resend from `EMAIL_FROM`, template `server/src/templates/verifyEmail.ts` (inline HTML string — no file IO in serverless; logged to console when `RESEND_API_KEY` is unset) (`{{name}}`, `{{link}}` = `${CLIENT_URL}/verificar-email?token=…`). Increment `verificationEmailsSent`, set `lastVerificationEmailAt`. If Resend fails → still 201 but respond `email.send_failed` message variant so the UI offers "Reenviar".
 3. `POST /auth/verify-email` → verify JWT purpose + user pending → `status: 'active'`. Already active → 200 `auth.already_verified`.
 4. `POST /auth/resend-verification` → always 200. Sends only if user exists, is `pending`, and fewer than 3 sends in the last 24 h. IP-limited 3/h.
 
 Email budget safeguards:
 
 - Only this one email type exists. No login, reset, or notification emails.
-- Per-user cap 3/day; global soft cap: service refuses to send when the count of sends today (aggregated from `lastVerificationEmailAt` ≥ start of day) reaches 90, returning `email.daily_cap` — leaves headroom under Resend's 100/day.
+- Per-user cap 3 per rolling 24 h (`users.verificationEmailsWindowCount` + `lastVerificationEmailAt`); global soft cap: service refuses to send when the count of sends today (aggregated from `lastVerificationEmailAt` ≥ start of day) reaches 90, returning `email.daily_cap` — leaves headroom under Resend's 100/day.
 - Admin stats show emails sent today/this month (aggregate over users' counters; exact enough).
 - Admins can activate a `pending` user manually (`PATCH /admin/users/:id/status`) when email delivery fails.
 

@@ -32,10 +32,10 @@ Steps
 
 Done when
 
-- [ ] Register → email received (Resend sandbox) → verify → login sets two cookies → `GET /auth/me` works → wait 15 min (or set TTL 10s) → next call auto-refreshes → logout clears.
-- [ ] Refresh token reuse: replaying an old cookie revokes the family (manual test with curl).
-- [ ] Blocked / pending users cannot log in; rate limits return 429 with `rate.limited`.
-- [ ] `pnpm seed` creates superadmin; `GET /campaigns/active` returns the default campaign.
+- [x] Register → email received (Resend sandbox) → verify → login sets two cookies → `GET /auth/me` works → wait 15 min (or set TTL 10s) → next call auto-refreshes → logout clears.
+- [x] Refresh token reuse: replaying an old cookie revokes the family (manual test with curl).
+- [x] Blocked / pending users cannot log in; rate limits return 429 with `rate.limited`.
+- [x] `pnpm seed` creates superadmin; `GET /campaigns/active` returns the default campaign.
 
 ## Phase 2 — Client core
 

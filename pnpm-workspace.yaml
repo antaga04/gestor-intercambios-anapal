@@ -1,0 +1,8 @@
+packages:
+  - shared
+  - client
+  - server
+
+allowBuilds:
+  bcrypt: true
+  esbuild: true

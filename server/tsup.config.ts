@@ -13,5 +13,4 @@ export default defineConfig({
     // Bundle workspace code so the Vercel function is self-contained.
     noExternal: ['@anapal/shared'],
     tsconfig: './tsconfig.json',
-    onSuccess: 'mkdir -p dist/templates && cp -r templates/. dist/templates/',
 });

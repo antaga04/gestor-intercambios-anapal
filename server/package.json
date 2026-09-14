@@ -23,7 +23,6 @@
         "helmet": "^8.1.0",
         "jsonwebtoken": "^9.0.2",
         "mongoose": "^8.18.0",
-        "request-ip": "^3.3.0",
         "resend": "^6.0.1",
         "zod": "^3.25.76"
     },
@@ -35,7 +34,6 @@
         "@types/express": "^5.0.3",
         "@types/jsonwebtoken": "^9.0.10",
         "@types/node": "^24.3.0",
-        "@types/request-ip": "^0.0.41",
         "eslint": "^9.32.0",
         "globals": "^16.3.0",
         "tsup": "^8.5.0",

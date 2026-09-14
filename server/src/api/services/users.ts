@@ -17,9 +17,12 @@ export async function getMe(userId: string): Promise<UserDocument> {
     return user;
 }
 
-/** Public directory: active users other than me, searchable by receptor number prefix, name or población. */
+/**
+ * Public directory: active admons other than me, searchable by receptor number prefix, name or población.
+ * The superadmin account is ANAPAL's own, not an admon, so it never appears as an exchange counterpart.
+ */
 export async function directory(meId: string, query: UserDirectoryQuery): Promise<Paginated<PublicUser>> {
-    const filter: Record<string, unknown> = { status: 'active', _id: { $ne: meId } };
+    const filter: Record<string, unknown> = { status: 'active', _id: { $ne: meId }, role: { $ne: 'superadmin' } };
     if (query.provincia) filter.provincia = query.provincia;
     if (query.q) {
         const rx = new RegExp(escapeRegex(query.q), 'i');

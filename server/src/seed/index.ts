@@ -8,7 +8,7 @@ import { env } from '@/config/env';
 import { connectToDatabase } from '@/config/db';
 import { seedSuperadmin } from '@/seed/superadmin';
 import { seedDefaultCampaign } from '@/seed/campaign';
-import { seedDemoUsers } from '@/seed/demo';
+import { seedDemoExchanges, seedDemoUsers } from '@/seed/demo';
 
 async function main() {
     const demo = process.argv.includes('--demo');
@@ -17,7 +17,10 @@ async function main() {
     await connectToDatabase();
     await seedSuperadmin();
     await seedDefaultCampaign();
-    if (demo) await seedDemoUsers();
+    if (demo) {
+        await seedDemoUsers();
+        await seedDemoExchanges();
+    }
 }
 
 main()

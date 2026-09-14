@@ -21,6 +21,9 @@ export type LotterySource = (typeof LOTTERY_SOURCE)[number];
 
 export const DECIMOS_PER_BILLETE = 10;
 
+/** Resend free tier; the admin panel shows usage against these. */
+export const EMAIL_CAPS = { daily: 100, monthly: 3000 } as const;
+
 export const LIMITS = {
     numeroLength: 5,
     serieMin: 1,

@@ -97,6 +97,20 @@ export const MESSAGES_ES = {
     'campaign.created': 'Campaña creada.',
     'campaign.updated': 'Campaña actualizada.',
 
+    // admin
+    'admin.stats': 'OK',
+    'admin.users': 'OK',
+    'admin.user': 'OK',
+    'admin.user_updated': 'Datos del usuario actualizados.',
+    'admin.status_updated': 'Estado del usuario actualizado.',
+    'admin.role_updated': 'Rol del usuario actualizado.',
+    'admin.password_set': 'Contraseña temporal establecida. El usuario deberá cambiarla al entrar.',
+    'admin.sessions_revoked': 'Se han cerrado todas las sesiones del usuario.',
+    'admin.requests': 'OK',
+    'admin.exchanges': 'OK',
+    'admin.cannot_modify_superadmin': 'La cuenta de superadministrador no se puede modificar desde aquí.',
+    'admin.cannot_modify_self': 'No puedes cambiar tu propio estado o rol.',
+
     // scanning (client-side codes, kept here so toasts share one dictionary)
     'scan.unreadable': 'No se ha podido leer el código. Inténtalo de nuevo.',
     'scan.campaign_mismatch': 'Este décimo no parece ser del sorteo de esta campaña.',

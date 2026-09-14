@@ -71,7 +71,7 @@ client/src/
 │   ├── campaigns/ {api.ts, hooks.ts, components/CampaignBanner.tsx}
 │   ├── exchanges/ {api.ts, hooks.ts, components/ExchangeTable.tsx, ExchangeFilters.tsx, RowEditor.tsx, RowTable.tsx, RowTypeSelect.tsx, SeriesFields.tsx, DecimosItemsField.tsx, ExchangeTotals.tsx, InboxList.tsx, ExchangeActions.tsx}
 │   ├── scanning/  {useBarcodeScanner.ts, CameraScannerDialog.tsx, ScannerStatus.tsx}
-│   ├── lottery/   {api.ts, hooks.ts, components/LotteryImportDialog.tsx, LotteryTable.tsx, useLotteryCheck.ts}
+│   ├── lottery/   {api.ts, hooks.ts (incl. useLotteryCheck), components/{LotteryImportDialog,LotteryTable,AddNumberForm}.tsx}
 │   ├── controlList/ {hooks.ts, components/ControlListTable.tsx, ControlListTotals.tsx}
 │   ├── pdf/       {envelopePdf.ts, envelopeLayout.ts, sheetPdf.ts, controlListPdf.ts, merge.ts, PdfPreviewDialog.tsx, download.ts}
 │   ├── dashboard/ {api.ts, hooks.ts, components/StatCard.tsx, LastExchangeCard.tsx, InstructionsCard.tsx}

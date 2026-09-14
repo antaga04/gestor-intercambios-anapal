@@ -71,7 +71,10 @@ shared/
     ├── types/                  # z.infer exports + API envelope types (ApiSuccess, ApiError, Paginated<T>)
     ├── lottery/
     │   ├── decodeDecimo.ts     # user-provided decoder (see 03)
-    │   ├── amounts.ts          # toDecimos, toBilletes, formatBilletes, rowAmountDecimos, exchangeTotalDecimos
+    │   ├── amounts.ts          # toBilletes, formatBilletes, rowAmountDecimos, exchangeTotalDecimos
+    │   ├── direction.ts        # pairDirection(gives, receives)
+    │   ├── series.ts           # normalizeSeries, mergeSeries, seriesContains, countSeries, formatSeries
+    │   ├── parseLotteryList.ts # CSV/TXT/pasted list → rows + per-line issues
     │   ├── rows.ts             # validateRow, mergeScanIntoRow (pure scan-to-row logic)
     │   └── controlList.ts      # buildControlList(exchanges, meId)
     ├── messages/

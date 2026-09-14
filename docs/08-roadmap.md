@@ -76,12 +76,13 @@ Done when
 Steps
 
 1. Shared `schemas/lottery.ts`; (model `lotteryNumber` already exists from Phase 3); routes/services (`list`, `import` with upsert + series merge, `create`, `delete`, `clear`, `check`).
-2. Client: `LotteryImportDialog` (papaparse, preview, chunked upload), `LotteryTable`, manual add, `useLotteryCheck` (local lookup over cached list).
+2. Shared `lottery/series.ts` (normalize/merge/format ranges) and `lottery/parseLotteryList.ts`, both unit-tested.
+3. Client: `LotteryImportDialog` (file or paste, parsed preview, per-line errors, chunked upload, replace option), `LotteryTable` with search, `AddNumberForm`, `useLotteryCheck` (local lookup over the cached list).
 
 Done when
 
-- [ ] Importing a CSV with `numero;desde;hasta` lines and a TXT with plain numbers produces the expected list; re-import merges series; `7` becomes `00007`.
-- [ ] `GET /lottery/check?numero=` and the local hook agree.
+- [x] Importing a CSV with `numero;desde;hasta` lines and a TXT with plain numbers produces the expected list; re-import merges series; `7` becomes `00007`.
+- [x] `GET /lottery/check?numero=` and the local hook agree.
 
 ## Phase 5 — Exchanges
 

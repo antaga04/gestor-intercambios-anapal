@@ -174,10 +174,10 @@ Scanned values pre-fill the same inputs the user could type, so manual correctio
 
 ## 6. "Mi lotería" import
 
-- Input: file `.csv`/`.txt` or pasted text. One número per line: `numero` or `numero;serieDesde;serieHasta` (also accepts `,` and tab). Numbers shorter than 5 digits are left-padded with zeros (`7` → `00007`) — shown in the preview so the user can confirm.
-- Client parses with papaparse, validates each line with `lotteryNumberSchema`, shows a preview table with per-line errors, then `POST /lottery/import` in chunks of 1000.
-- Server upserts on `(user, campaign, numero)`, merging `series` ranges (union, normalised and sorted).
-- Manual add/remove rows in the same page; "Vaciar lista" clears the campaign's list.
+- Input: file `.csv`/`.txt` or pasted text. One número per line: `numero`, `numero;serie` or `numero;serieDesde;serieHasta` (`;`, `,`, tabs and spaces all work). Numbers shorter than 5 digits are left-padded with zeros (`7` → `00007`); blank lines and `#` comments are ignored; a número repeated in the file merges its series.
+- Parsing lives in `shared/src/lottery/parseLotteryList.ts` (`parseLotteryList(text) → { rows, issues, mergedCount }`, unit-tested) rather than in a CSV library: the format has no quoting and the same parser must back both the preview and any future server-side import. The dialog shows the parsed preview plus the rejected lines with their line number and reason, then `POST /lottery/import` in chunks of `LIMITS.lotteryImportChunk` (1000).
+- Server upserts on `(user, campaign, numero)`, merging `series` ranges through `mergeSeries`/`normalizeSeries` (sorted, overlapping **and adjacent** ranges collapsed: `40–74` + `75–90` → `40–90`). `replace: true` (only on the first chunk) wipes the campaign list first.
+- Manual add/remove rows in the same page; "Vaciar lista" clears the campaign's list. Editing "Mi lotería" stays allowed after the exchange deadline — it is the admon's own stock list, not an exchange.
 
 ## 7. Control list ("Lista de control")
 

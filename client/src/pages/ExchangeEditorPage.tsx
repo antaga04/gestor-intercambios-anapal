@@ -48,18 +48,19 @@ export function ExchangeEditorPage({ mode }: { mode: 'create' | 'edit' }) {
     const totalDecimos = useMemo(() => exchangeTotalDecimos(rows.map(draftToRow)), [rows]);
     const signedCount = rows.filter((r) => r.signed).length;
 
-    const commitRow = (row: RowDraft) => {
-        setRows((current) => {
-            const index = current.findIndex((r) => r.key === row.key);
-            if (index >= 0) return current.map((r) => (r.key === row.key ? row : r));
-            if (current.some((r) => r.numero === row.numero)) {
-                toast.error(`El número ${row.numero} ya está en el intercambio.`);
-                return current;
-            }
-            return [...current, row];
-        });
+    const commitRow = (row: RowDraft): boolean => {
+        if (rows.some((r) => r.key !== row.key && r.numero === row.numero)) {
+            toast.error(`El número ${row.numero} ya está en el intercambio.`);
+            return false;
+        }
+        setRows((current) =>
+            current.some((r) => r.key === row.key)
+                ? current.map((r) => (r.key === row.key ? row : r))
+                : [...current, row],
+        );
         setEditingKey(null);
         setDraft(emptyDraft(row.type));
+        return true;
     };
 
     const save = async (send: boolean) => {

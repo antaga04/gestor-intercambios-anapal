@@ -1,26 +1,47 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { AlertTriangle, Check, Plus, X } from 'lucide-react';
-import { LIMITS, rowSeries, validateRow } from '@anapal/shared';
+import { toast } from 'sonner';
+import {
+    describeScan,
+    describeScanEvent,
+    LIMITS,
+    mergeScanIntoRow,
+    rowSeries,
+    scanMatchesCampaign,
+    validateRow,
+    type DecimoDecodificado,
+} from '@anapal/shared';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useActiveCampaign } from '@/features/campaigns/hooks';
 import { RowTypeSelect } from '@/features/exchanges/components/RowTypeSelect';
 import {
     derivedQuantity,
     draftToRow,
     emptyDraft,
+    newKey,
     parseNumberInput,
     type RowDraft,
 } from '@/features/exchanges/rowDraft';
 import { LOTTERY_WARNING_TEXT, useLotteryCheck } from '@/features/lottery/hooks';
+import { ScannerStatus } from '@/features/scanning/ScannerStatus';
+import { useBarcodeScanner } from '@/features/scanning/useBarcodeScanner';
+import { t } from '@/lib/messages';
 import { cn } from '@/lib/utils';
+
+// ZXing is ~400 kB: only load it once someone opens the camera.
+const CameraScannerDialog = lazy(() =>
+    import('@/features/scanning/CameraScannerDialog').then((m) => ({ default: m.CameraScannerDialog })),
+);
 
 interface RowEditorProps {
     draft: RowDraft;
     onChange: (draft: RowDraft) => void;
-    onCommit: (draft: RowDraft) => void;
+    /** Returns whether the row was taken (false e.g. when its número is already in the exchange). */
+    onCommit: (draft: RowDraft) => boolean;
     onCancelEdit?: () => void;
     editing: boolean;
 }
@@ -49,8 +70,11 @@ function Field({
 
 export function RowEditor({ draft, onChange, onCommit, onCancelEdit, editing }: RowEditorProps) {
     const [touched, setTouched] = useState(false);
+    const [cameraOpen, setCameraOpen] = useState(false);
+    const [cameraLoaded, setCameraLoaded] = useState(false);
     const numeroRef = useRef<HTMLInputElement>(null);
     const checkLottery = useLotteryCheck();
+    const { data: campaign } = useActiveCampaign();
 
     const row = useMemo(() => draftToRow(draft), [draft]);
     const issues = useMemo(() => validateRow(row), [row]);
@@ -74,10 +98,40 @@ export function RowEditor({ draft, onChange, onCommit, onCancelEdit, editing }: 
     const commit = () => {
         setTouched(true);
         if (!canCommit) return;
-        onCommit(draft);
+        if (!onCommit(draft)) return;
         setTouched(false);
         numeroRef.current?.focus();
     };
+
+    // Both scanners (keyboard wedge and camera) end up here; docs/03 §5.3 decides what a scan does.
+    const handleScan = (scan: DecimoDecodificado) => {
+        if (campaign && !scanMatchesCampaign(scan, campaign.barcode)) {
+            toast.warning(t('scan.campaign_mismatch'), { id: 'scan-campaign-mismatch' });
+        }
+        const description = describeScan(scan);
+        const { row: merged, event } = mergeScanIntoRow(draft, scan);
+
+        if (event === 'duplicate') {
+            toast.warning(describeScanEvent(event, merged), { description });
+            return;
+        }
+        if (event === 'new_row') {
+            // A different número: the current row must be complete before it is left behind.
+            if (!canCommit || !onCommit(draft)) {
+                setTouched(true);
+                toast.error(t('scan.finish_row_first'), { description });
+                return;
+            }
+            setTouched(false);
+            onChange({ ...merged, key: newKey(), signed: false, note: undefined });
+            toast.success(describeScanEvent(event, merged), { description });
+            return;
+        }
+        onChange(merged);
+        toast.success(describeScanEvent(event, merged), { description });
+    };
+
+    const { lastScanAt } = useBarcodeScanner({ enabled: true, onScan: handleScan });
 
     // Once the número is complete the user is meaningfully into the row: explain what is missing
     // instead of silently disabling the button.
@@ -243,6 +297,20 @@ export function RowEditor({ draft, onChange, onCommit, onCancelEdit, editing }: 
                         <li key={issue.path + issue.code}>{issue.message}</li>
                     ))}
                 </ul>
+            )}
+
+            <ScannerStatus
+                lastScanAt={lastScanAt}
+                onOpenCamera={() => {
+                    setCameraLoaded(true);
+                    setCameraOpen(true);
+                }}
+                className="border-t pt-3"
+            />
+            {cameraLoaded && (
+                <Suspense fallback={null}>
+                    <CameraScannerDialog open={cameraOpen} onOpenChange={setCameraOpen} onScan={handleScan} />
+                </Suspense>
             )}
         </div>
     );

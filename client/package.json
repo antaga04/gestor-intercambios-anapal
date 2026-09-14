@@ -15,6 +15,8 @@
         "@anapal/shared": "workspace:*",
         "@hookform/resolvers": "^5.2.1",
         "@tanstack/react-query": "^5.85.5",
+        "@zxing/browser": "^0.2.1",
+        "@zxing/library": "^0.23.0",
         "axios": "^1.11.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",

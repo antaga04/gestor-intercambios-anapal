@@ -46,7 +46,11 @@ export async function getDashboard(user: AuthUser, campaign: CampaignDocument): 
         countsByStatus(campaignId, 'to', userId),
         Exchange.countDocuments({ campaign: campaignId, to: userId, status: 'pending', seenByReceiverAt: null }),
         LotteryNumber.countDocuments({ campaign: campaignId, user: userId }),
-        Exchange.findOne({ campaign: campaignId, $or: [{ from: userId }, { to: userId }] })
+        // Incoming drafts are private to their sender: never surface one as "último intercambio".
+        Exchange.findOne({
+            campaign: campaignId,
+            $or: [{ from: userId }, { to: userId, status: { $ne: 'draft' } }],
+        })
             .sort({ updatedAt: -1 })
             .populate('from', PUBLIC_USER_FIELDS)
             .populate('to', PUBLIC_USER_FIELDS)

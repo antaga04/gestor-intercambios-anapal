@@ -113,7 +113,7 @@ Card forms (RHF + zod). Registro fields: email, contraseña (+ confirmación), n
 - Stat cards (2×4 grid, stack on mobile): Sobres a enviar, Sobres a recibir, Billetes que doy (`formatBilletes(decimosOut)`), Billetes que recibo, Pendientes en bandeja (highlight when > 0), Intercambios aceptados, Borradores, Números en mi lotería.
 - `LastExchangeCard`: counterpart, direction badge, status badge, total, "Ver".
 - `QuickActions`: Nuevo intercambio, Ver bandeja, Importar lotería, Descargar sobres, Lista de control.
-- "Instrucciones" collapsible with the same 3 steps as landing + scanning tips.
+- "Instrucciones" collapsible (`InstructionsCard`) with the 4 steps + a "Consejos para escanear" box (row type first, wedge always listening, camera continuous mode, new número commits the row).
 
 ### Perfil `/perfil`
 

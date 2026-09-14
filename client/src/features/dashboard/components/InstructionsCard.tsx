@@ -1,4 +1,4 @@
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { ChevronDown, HelpCircle, ScanBarcode } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
@@ -13,6 +13,13 @@ const STEPS = [
         'Imprime los sobres',
         'Descarga el PDF de cada sobre o todos de golpe, y lleva el control en la lista de control.',
     ],
+];
+
+const SCAN_TIPS = [
+    'Elige primero el tipo de fila: en «Billete» el primer décimo fija la serie inicial y el segundo la final (en cualquier orden); en «Varios décimos» cada lectura añade un décimo.',
+    'Con un escáner USB o Bluetooth no hace falta pulsar nada: mientras el editor está abierto verás «Escáner listo».',
+    'Con la cámara del móvil, activa «Modo continuo» para leer varios décimos seguidos sin cerrar la ventana.',
+    'Si escaneas un número distinto, la fila actual se guarda sola y se abre una nueva con ese número.',
 ];
 
 export function InstructionsCard() {
@@ -40,6 +47,16 @@ export function InstructionsCard() {
                                 </li>
                             ))}
                         </ol>
+                        <div className="mt-5 rounded-lg border bg-muted/30 p-4">
+                            <p className="flex items-center gap-2 text-sm font-medium">
+                                <ScanBarcode className="size-4 text-primary" /> Consejos para escanear
+                            </p>
+                            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+                                {SCAN_TIPS.map((tip) => (
+                                    <li key={tip}>{tip}</li>
+                                ))}
+                            </ul>
+                        </div>
                     </CardContent>
                 </CollapsibleContent>
             </Card>

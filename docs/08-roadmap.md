@@ -139,9 +139,11 @@ Steps
 1. Finalise `GET /dashboard` aggregation (single pipeline per direction) and cache 30 s client-side.
 2. Last exchange card, quick actions, instructions block; empty states for new users.
 
+> Most of this landed in Phase 3. Phase 8 proper: the "último intercambio" query now skips incoming drafts (they are private to the sender), the instructions card gained the scanning tips, and the quick actions include "Descargar sobres".
+
 Done when
 
-- [ ] Numbers on dashboard match list/control-list totals for a seeded user.
+- [x] Numbers on dashboard match list/control-list totals for a seeded user (`envelopesToSend/Receive` and `decimosOut/In` are computed with the same pending+accepted rule as `buildControlList`; checked against `pnpm seed --demo` data).
 
 ## Phase 9 — Admin panel
 

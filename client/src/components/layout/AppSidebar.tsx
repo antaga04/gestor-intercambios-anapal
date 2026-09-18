@@ -28,7 +28,12 @@ function NavEntry({ item, badge }: { item: NavItem; badge?: number }) {
     const isActive = exact ? pathname === item.to : pathname === item.to || pathname.startsWith(item.to + '/');
     return (
         <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+            <SidebarMenuButton
+                asChild
+                isActive={isActive}
+                tooltip={item.title}
+                className="rounded-lg transition-colors data-[active=true]:shadow-soft"
+            >
                 <Link to={item.to} onClick={() => isMobile && setOpenMobile(false)}>
                     <item.icon />
                     <span>{item.title}</span>
@@ -49,18 +54,18 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon">
-            <SidebarHeader>
+            <SidebarHeader className="border-b border-sidebar-border/70 pb-3">
                 <Link
                     to="/dashboard"
                     className="flex items-center gap-2 px-1 py-1 group-data-[collapsible=icon]:justify-center"
                 >
                     <Logo className="h-7 shrink-0" />
-                    <span className="truncate text-sm font-semibold group-data-[collapsible=icon]:hidden">
+                    <span className="truncate font-heading text-sm font-bold tracking-tight group-data-[collapsible=icon]:hidden">
                         Intercambios
                     </span>
                 </Link>
             </SidebarHeader>
-            <SidebarContent>
+            <SidebarContent className="gap-1 pt-2">
                 <SidebarGroup>
                     <SidebarGroupContent>
                         <SidebarMenu>
@@ -87,10 +92,14 @@ export function AppSidebar() {
                     </SidebarGroup>
                 )}
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter className="border-t border-sidebar-border/70 pt-3">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton onClick={() => void logout()} tooltip="Cerrar sesión">
+                        <SidebarMenuButton
+                            onClick={() => void logout()}
+                            tooltip="Cerrar sesión"
+                            className="rounded-lg"
+                        >
                             <LogOut />
                             <span>Cerrar sesión</span>
                         </SidebarMenuButton>

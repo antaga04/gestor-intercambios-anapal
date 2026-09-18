@@ -21,11 +21,11 @@ export function AppHeader() {
     const { data: campaign } = useActiveCampaign();
 
     return (
-        <header className="sticky top-0 z-10 flex h-14 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur">
-            <SidebarTrigger className="-ml-1" />
+        <header className="sticky top-0 z-10 flex h-14 items-center gap-2 border-b border-border/70 bg-background/80 px-4 backdrop-blur-md">
+            <SidebarTrigger className="-ml-1 rounded-lg" />
             <Separator orientation="vertical" className="mr-1 h-5" />
             {campaign && (
-                <Badge variant="secondary" className="hidden sm:inline-flex">
+                <Badge variant="secondary" className="hidden font-normal sm:inline-flex">
                     {campaign.name}
                 </Badge>
             )}
@@ -33,7 +33,7 @@ export function AppHeader() {
                 <ThemeToggle />
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="max-w-56 gap-2">
+                        <Button variant="ghost" size="sm" className="max-w-56 gap-2 rounded-lg">
                             <UserRound className="size-4" />
                             <span className="truncate">{user?.name}</span>
                         </Button>

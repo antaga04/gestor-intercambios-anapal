@@ -8,11 +8,13 @@ export function PublicLayout() {
     const { status } = useAuth();
     return (
         <div className="flex min-h-svh flex-col bg-background text-foreground">
-            <header className="border-b bg-card">
+            <header className="sticky top-0 z-10 border-b border-border/70 bg-background/80 backdrop-blur-md">
                 <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4">
                     <Link to="/" className="flex items-center gap-2" aria-label="Inicio">
                         <Logo className="h-8" />
-                        <span className="hidden text-sm font-semibold sm:inline">Intercambios</span>
+                        <span className="hidden font-heading text-sm font-bold tracking-tight sm:inline">
+                            Intercambios
+                        </span>
                     </Link>
                     <nav className="flex items-center gap-1">
                         <ThemeToggle />

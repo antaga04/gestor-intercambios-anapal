@@ -100,7 +100,7 @@ export async function appendSheet(doc: PDFDocument, exchange: ExchangeDetail): P
         { header: 'Tipo', width: 82 },
         { header: 'Cantidad', width: 78, align: 'right' as const },
         { header: 'Series / fracciones', width: CONTENT_W - 62 - 82 - 78 - 56 },
-        { header: 'Firmado', width: 56, align: 'center' as const },
+        { header: 'Sellado', width: 56, align: 'center' as const },
     ];
     const rows = exchange.rows.map((row) => [
         row.numero,
@@ -124,7 +124,7 @@ export async function appendSheet(doc: PDFDocument, exchange: ExchangeDetail): P
     y = cursor.y - 18;
 
     const signed = exchange.rows.filter((r) => r.signed).length;
-    const totals = `${formatInt(exchange.rows.length)} ${exchange.rows.length === 1 ? 'fila' : 'filas'} · ${formatInt(exchange.totalDecimos)} décimos · ${formatBilletes(exchange.totalDecimos)} billetes${signed ? ` · ${formatInt(signed)} ${signed === 1 ? 'firmado' : 'firmados'}` : ''}`;
+    const totals = `${formatInt(exchange.rows.length)} ${exchange.rows.length === 1 ? 'fila' : 'filas'} · ${formatInt(exchange.totalDecimos)} décimos · ${formatBilletes(exchange.totalDecimos)} billetes${signed ? ` · ${formatInt(signed)} ${signed === 1 ? 'sellado' : 'firmados'}` : ''}`;
     drawText(page, totals, PAGE_W - MARGIN, y, { font: fonts.bold, size: 10, align: 'right' });
     y -= 22;
 

@@ -28,7 +28,7 @@ Conventions used across the docs: English prose, Spanish domain terms and UI str
 | **Billete**            | 10 décimos of the same número and serie (fracciones 1–10). Unit of account: **1 billete = 10 décimos**.                                              |
 | **Décimo**             | One ticket. Identified by número + serie + fracción. 1 décimo = 0,1 billete.                                                                         |
 | **Fracción**           | Position of a décimo inside its serie, `1`–`10`.                                                                                                     |
-| **Firmado / signed**   | A row flagged as "signed" (the admon signs the décimos it gives). Stored as a boolean per row.                                                       |
+| **Sellado / signed**   | A row flagged as "signed" (the admon signs the décimos it gives). Stored as a boolean per row.                                                       |
 | **Intercambio**        | An `Exchange` document: one admon (`from`) gives a list of rows to another (`to`). One exchange = one physical envelope.                             |
 | **Unidireccional**     | Only A→B exists for a pair in a campaign.                                                                                                            |
 | **Bidireccional**      | Both A→B and B→A exist (and neither is rejected/cancelled). Computed, not stored as a type.                                                          |

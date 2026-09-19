@@ -274,7 +274,7 @@ export function RowEditor({ draft, onChange, onCommit, onCancelEdit, editing }: 
                         checked={draft.signed}
                         onCheckedChange={(v) => set({ signed: v === true })}
                     />
-                    <Label htmlFor="row-signed">Firmado</Label>
+                    <Label htmlFor="row-signed">Sellado</Label>
                 </div>
                 <div className="flex items-center gap-2">
                     {warning && (

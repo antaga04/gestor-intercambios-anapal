@@ -89,7 +89,7 @@ Indexes:
 | `quantity`      | int ≥ 1                              | `billete`: nº de billetes (1–192). `decimo`: always `1`. `decimos`: nº de décimos, 2–1919.                     |
 | `amountDecimos` | int                                  | Derived: `billete` → `quantity * 10`; otherwise `quantity`. Recomputed on save, never trusted from the client. |
 | `details`       | object, optional                     | Shape depends on `type` (below).                                                                               |
-| `signed`        | boolean, default false               | "Firmado".                                                                                                     |
+| `signed`        | boolean, default false               | "Sellado".                                                                                                     |
 | `note`          | string ≤ 200, optional               |                                                                                                                |
 
 `details` by type:

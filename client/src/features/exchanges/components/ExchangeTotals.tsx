@@ -19,7 +19,7 @@ export function ExchangeTotals({ rowCount, decimos, signedCount, className }: Ex
             <span className="text-base font-semibold text-primary">{formatBilletes(decimos)} billetes</span>
             {signedCount > 0 && (
                 <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-                    <PenLine className="size-3.5" /> {formatInt(signedCount)} firmado{signedCount === 1 ? '' : 's'}
+                    <PenLine className="size-3.5" /> {formatInt(signedCount)} sellado{signedCount === 1 ? '' : 's'}
                 </span>
             )}
         </div>

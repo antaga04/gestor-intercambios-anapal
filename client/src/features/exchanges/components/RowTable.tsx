@@ -29,7 +29,7 @@ export function RowTable({ rows, onEdit, onRemove, editingKey }: RowTableProps) 
                         <TableHead className="w-20 text-right">Cantidad</TableHead>
                         <TableHead>Series / fracciones</TableHead>
                         <TableHead className="w-24 text-right">Billetes</TableHead>
-                        <TableHead className="w-24">Firmado</TableHead>
+                        <TableHead className="w-24">Sellado</TableHead>
                         {editable && <TableHead className="w-24" />}
                     </TableRow>
                 </TableHeader>

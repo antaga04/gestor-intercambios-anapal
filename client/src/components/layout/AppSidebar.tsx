@@ -50,6 +50,7 @@ export function AppSidebar() {
     const { data: dashboard } = useDashboard();
     const inboxCount = dashboard?.inboxPending ?? 0;
     const requestsCount = dashboard?.adminPendingRequests ?? 0;
+    const mainItems = MAIN_NAV.filter((i) => !i.legacyOnly || (dashboard?.legacyCount ?? 0) > 0);
     const adminItems = ADMIN_NAV.filter((i) => user && (user.role === 'superadmin' || i.roles.includes(user.role)));
 
     return (
@@ -69,7 +70,7 @@ export function AppSidebar() {
                 <SidebarGroup>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {MAIN_NAV.map((item) => (
+                            {mainItems.map((item) => (
                                 <NavEntry key={item.to} item={item} badge={item.inboxBadge ? inboxCount : undefined} />
                             ))}
                         </SidebarMenu>
@@ -95,11 +96,7 @@ export function AppSidebar() {
             <SidebarFooter className="border-t border-sidebar-border/70 pt-3">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton
-                            onClick={() => void logout()}
-                            tooltip="Cerrar sesión"
-                            className="rounded-lg"
-                        >
+                        <SidebarMenuButton onClick={() => void logout()} tooltip="Cerrar sesión" className="rounded-lg">
                             <LogOut />
                             <span>Cerrar sesión</span>
                         </SidebarMenuButton>

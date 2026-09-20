@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, ArrowLeftRight, Scale } from 'lucide-react';
+import { ArrowLeft, ArrowLeftRight, History, Scale } from 'lucide-react';
 import type { ExchangeDetail } from '@anapal/shared';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -122,6 +123,8 @@ export function ExchangeDetailPage() {
                 <Balance outgoing={outgoing} incoming={incoming} isParty={isParty} />
             </div>
 
+            {isParty && <LegacyNotice outgoing={outgoing} incoming={incoming} />}
+
             {isMobile ? (
                 <Tabs defaultValue={openedKind}>
                     <TabsList className="grid w-full grid-cols-2">
@@ -147,6 +150,30 @@ export function ExchangeDetailPage() {
                 </div>
             )}
         </>
+    );
+}
+
+/** Shown when either envelope was imported from the previous app (docs/02 "Migración"). */
+function LegacyNotice({ outgoing, incoming }: { outgoing?: ExchangeDetail; incoming?: ExchangeDetail }) {
+    const imported = [outgoing, incoming].filter((e): e is ExchangeDetail => !!e?.legacy);
+    if (imported.length === 0) return null;
+    const skipped = imported.reduce((acc, e) => acc + (e.legacy?.skippedLines ?? 0), 0);
+    return (
+        <Alert>
+            <History />
+            <AlertTitle>Importado de la versión anterior</AlertTitle>
+            <AlertDescription>
+                <p>
+                    {skipped > 0
+                        ? `${skipped} ${skipped === 1 ? 'línea sin número no se pudo convertir' : 'líneas sin número no se pudieron convertir'}; puedes verlas en el `
+                        : 'Puedes ver el registro original en el '}
+                    <Link to="/historico" className="underline underline-offset-2">
+                        histórico
+                    </Link>
+                    .
+                </p>
+            </AlertDescription>
+        </Alert>
     );
 }
 

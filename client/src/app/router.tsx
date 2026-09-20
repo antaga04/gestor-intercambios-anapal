@@ -6,6 +6,7 @@ import { PublicLayout } from '@/components/layout/PublicLayout';
 import { ControlListPage } from '@/pages/ControlListPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
+import { HistoricoPage } from '@/pages/HistoricoPage';
 import { LandingPage } from '@/pages/LandingPage';
 import { LegalPage } from '@/pages/LegalPage';
 import { LoginPage } from '@/pages/LoginPage';
@@ -50,6 +51,7 @@ export function AppRouter() {
                         <Route path="/intercambios/:id/editar" element={<ExchangeEditorPage mode="edit" />} />
                         <Route path="/mi-loteria" element={<MyLotteryPage />} />
                         <Route path="/lista-control" element={<ControlListPage />} />
+                        <Route path="/historico" element={<HistoricoPage />} />
                         <Route element={<RoleRoute roles={['admin', 'superadmin']} />}>
                             <Route path="/admin" element={<AdminPanelPage />} />
                             <Route path="/admin/usuarios" element={<AdminUsersPage />} />

@@ -3,6 +3,7 @@ import {
     ArrowLeftRight,
     CalendarRange,
     ClipboardList,
+    History,
     KeyRound,
     LayoutDashboard,
     ShieldCheck,
@@ -20,6 +21,8 @@ export interface NavItem {
     inboxBadge?: boolean;
     /** Show the pending password-requests badge (admins). */
     requestsBadge?: boolean;
+    /** Only shown to users with records imported from the previous app. */
+    legacyOnly?: boolean;
 }
 
 export const MAIN_NAV: NavItem[] = [
@@ -27,6 +30,7 @@ export const MAIN_NAV: NavItem[] = [
     { title: 'Intercambios', to: '/intercambios', icon: ArrowLeftRight, inboxBadge: true },
     { title: 'Mi lotería', to: '/mi-loteria', icon: Ticket },
     { title: 'Lista de control', to: '/lista-control', icon: ClipboardList },
+    { title: 'Histórico', to: '/historico', icon: History, legacyOnly: true },
     { title: 'Perfil', to: '/perfil', icon: UserRound },
 ];
 

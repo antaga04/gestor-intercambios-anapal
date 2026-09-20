@@ -42,6 +42,15 @@ When the user has at least one `LotteryNumber` for the active campaign:
 
 Client evaluates this locally against `GET /lottery` (cached by TanStack Query). Server does not block on it.
 
+### Warnings about the other side (non-blocking)
+
+An exchange exists to gain numbers you lack, so giving a number the receiver already has — or receiving one you already have — is almost always a mistake, but it is never forbidden. `POST /exchanges/overlap` `{ to, numeros }` answers, for the numbers I am about to give:
+
+- `inTheirLottery` → the receiver has that número in their "Mi lotería" → warning `receiver_owns` ("La otra administración ya tiene este número"). Only membership of the numbers asked about is revealed, never their list; an empty list on their side flags nothing.
+- `inTheirEnvelope` → the número is in their live (pending/accepted) envelope to me → warning `receiver_gives` ("La otra administración también te da este número").
+
+On the receiving side the client checks locally: a received número in my own list → `already_owned`; a received número that I also give them → `i_also_give`. All six warnings (`client/src/features/exchanges/warnings.ts`) render the same way: amber icon + tooltip on the row, amber badges under the row editor, a one-line summary above the table.
+
 ## 3. Exchange lifecycle
 
 ```

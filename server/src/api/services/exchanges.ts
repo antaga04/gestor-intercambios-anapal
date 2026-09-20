@@ -3,6 +3,8 @@ import type {
     ControlList,
     ExchangeDetail,
     ExchangeInput,
+    ExchangeOverlap,
+    ExchangeOverlapInput,
     ExchangeQuery,
     ExchangeStatus,
     ExchangeSummary,
@@ -12,6 +14,7 @@ import type {
 } from '@anapal/shared';
 import { buildControlList } from '@anapal/shared';
 import { Exchange, type ExchangeDocument } from '@/api/models/exchange';
+import { LotteryNumber } from '@/api/models/lotteryNumber';
 import { PUBLIC_USER_FIELDS, User } from '@/api/models/user';
 import type { CampaignDocument } from '@/api/models/campaign';
 import { toExchangeDetail, toExchangeSummary } from '@/api/services/exchangeMapper';
@@ -263,6 +266,34 @@ export async function allForUser(campaign: Types.ObjectId, userId: string): Prom
         .sort({ updatedAt: -1 })
         .populate(POPULATE);
     return items.map((e) => toExchangeSummary(e, userId, counterpartStatusOf(e)));
+}
+
+/**
+ * Advisory check before giving `numeros` to `to` (docs/03 §2): which ones they already hold in "Mi lotería"
+ * and which ones they already give me in their live envelope. Only membership of the numbers asked about is
+ * revealed — never the receiver's whole list. Empty list on their side → nothing is flagged.
+ */
+export async function overlap({ actor, campaign }: Scope, input: ExchangeOverlapInput): Promise<ExchangeOverlap> {
+    if (input.numeros.length === 0) return { inTheirLottery: [], inTheirEnvelope: [] };
+    const numeros = [...new Set(input.numeros)];
+    const [owned, reverse] = await Promise.all([
+        LotteryNumber.find({ user: input.to, campaign: campaign._id, numero: { $in: numeros } })
+            .select('numero')
+            .lean(),
+        Exchange.findOne({
+            campaign: campaign._id,
+            from: input.to,
+            to: actor.id,
+            status: { $in: ['pending', 'accepted'] },
+        })
+            .select('rows.numero')
+            .lean(),
+    ]);
+    const given = new Set(reverse?.rows.map((r) => r.numero) ?? []);
+    return {
+        inTheirLottery: owned.map((doc) => doc.numero),
+        inTheirEnvelope: numeros.filter((numero) => given.has(numero)),
+    };
 }
 
 /** "Lista de control" of a user in a campaign (docs/03 §7). Admins call it for any user. */

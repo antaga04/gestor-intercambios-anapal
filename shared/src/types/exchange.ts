@@ -46,3 +46,12 @@ export interface ExchangeDetail extends ExchangeSummary {
     rejectReason?: string;
     campaign: { _id: string; name: string; exchangeDeadline: string };
 }
+
+/**
+ * Result of `POST /exchanges/overlap`: which of the numbers I plan to give the receiver already owns
+ * ("Mi lotería") and which ones they already give me in their live envelope. Both are advisory only.
+ */
+export interface ExchangeOverlap {
+    inTheirLottery: string[];
+    inTheirEnvelope: string[];
+}

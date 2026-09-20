@@ -55,6 +55,7 @@ export const MESSAGES_ES = {
     'exchange.list': 'OK',
     'exchange.control_list': 'OK',
     'exchange.detail': 'OK',
+    'exchange.overlap': 'OK',
     'exchange.not_found': 'Intercambio no encontrado.',
     'exchange.forbidden': 'No participas en este intercambio.',
     'exchange.not_owner': 'Solo quien envía el intercambio puede modificarlo.',

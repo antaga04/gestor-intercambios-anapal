@@ -1,5 +1,11 @@
 import type { Request, Response } from 'express';
-import type { ControlListQuery, ExchangeInput, ExchangeQuery, ExchangeUpdateInput } from '@anapal/shared';
+import type {
+    ControlListQuery,
+    ExchangeInput,
+    ExchangeOverlapInput,
+    ExchangeQuery,
+    ExchangeUpdateInput,
+} from '@anapal/shared';
 import { controlListToCsv } from '@anapal/shared';
 import * as exchangesService from '@/api/services/exchanges';
 import { getQuery } from '@/middlewares/validate';
@@ -31,6 +37,11 @@ export const controlList = asyncHandler(async (req: Request, res: Response) => {
         return res.send(controlListToCsv(payload));
     }
     return sendSuccess(res, 200, { i18n: 'exchange.control_list', message: 'OK', payload });
+});
+
+export const overlap = asyncHandler(async (req: Request, res: Response) => {
+    const payload = await exchangesService.overlap(scopeOf(req), req.body as ExchangeOverlapInput);
+    return sendSuccess(res, 200, { i18n: 'exchange.overlap', message: 'OK', payload });
 });
 
 export const getOne = asyncHandler(async (req: Request, res: Response) => {

@@ -97,6 +97,15 @@ export const exchangeQuerySchema = paginationQuerySchema.extend({
 });
 export type ExchangeQuery = z.infer<typeof exchangeQuerySchema>;
 
+/** Numbers the sender is about to give, checked against what the receiver already has / already gives back. */
+export const exchangeOverlapSchema = z
+    .object({
+        to: objectIdSchema,
+        numeros: z.array(numeroSchema).max(LIMITS.rowsPerExchange),
+    })
+    .strict();
+export type ExchangeOverlapInput = z.infer<typeof exchangeOverlapSchema>;
+
 export const controlListQuerySchema = z.object({
     format: z.enum(['json', 'csv']).default('json'),
 });

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
     controlListQuerySchema,
     exchangeInputSchema,
+    exchangeOverlapSchema,
     exchangeQuerySchema,
     exchangeRejectSchema,
     exchangeUpdateSchema,
@@ -22,6 +23,8 @@ router.get('/', validate({ query: exchangeQuerySchema }), exchanges.list);
 router.get('/inbox', exchanges.inbox);
 router.get('/control-list', validate({ query: controlListQuerySchema }), exchanges.controlList);
 router.post('/', requireOpenCampaign, validate({ body: exchangeInputSchema }), exchanges.create);
+// Read-only advisory check, so it stays available after the deadline.
+router.post('/overlap', validate({ body: exchangeOverlapSchema }), exchanges.overlap);
 
 router.get('/:id', withId, exchanges.getOne);
 router.put('/:id', withId, requireOpenCampaign, validate({ body: exchangeUpdateSchema }), exchanges.update);

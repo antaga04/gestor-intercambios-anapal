@@ -6,7 +6,6 @@ import {
     describeScanEvent,
     LIMITS,
     mergeScanIntoRow,
-    rowSeries,
     scanMatchesCampaign,
     validateRow,
     type DecimoDecodificado,
@@ -26,7 +25,7 @@ import {
     parseNumberInput,
     type RowDraft,
 } from '@/features/exchanges/rowDraft';
-import { LOTTERY_WARNING_TEXT, useLotteryCheck } from '@/features/lottery/hooks';
+import { ROW_WARNING_TEXT, type RowWarningsFn } from '@/features/exchanges/warnings';
 import { ScannerStatus } from '@/features/scanning/ScannerStatus';
 import { useBarcodeScanner } from '@/features/scanning/useBarcodeScanner';
 import { t } from '@/lib/messages';
@@ -44,6 +43,8 @@ interface RowEditorProps {
     onCommit: (draft: RowDraft) => boolean;
     onCancelEdit?: () => void;
     editing: boolean;
+    /** Advisory hints for the row being typed (my list, the receiver's list, their envelope). */
+    warningsFor?: RowWarningsFn;
 }
 
 function Field({
@@ -68,12 +69,11 @@ function Field({
     );
 }
 
-export function RowEditor({ draft, onChange, onCommit, onCancelEdit, editing }: RowEditorProps) {
+export function RowEditor({ draft, onChange, onCommit, onCancelEdit, editing, warningsFor }: RowEditorProps) {
     const [touched, setTouched] = useState(false);
     const [cameraOpen, setCameraOpen] = useState(false);
     const [cameraLoaded, setCameraLoaded] = useState(false);
     const numeroRef = useRef<HTMLInputElement>(null);
-    const checkLottery = useLotteryCheck();
     const { data: campaign } = useActiveCampaign();
 
     const row = useMemo(() => draftToRow(draft), [draft]);
@@ -81,12 +81,7 @@ export function RowEditor({ draft, onChange, onCommit, onCancelEdit, editing }: 
     const issueFor = (path: string) => issues.find((i) => i.path === path)?.message;
     const canCommit = issues.length === 0 && draft.numero.length === 5;
 
-    const warning = useMemo(() => {
-        if (draft.numero.length !== 5) return null;
-        return checkLottery(draft.numero, rowSeries(row));
-        // checkLottery is recreated on every render of the cached list; depend on its inputs instead.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [draft.numero, row]);
+    const warnings = draft.numero.length === 5 ? (warningsFor?.(draft) ?? []) : [];
 
     const derived = derivedQuantity(draft);
     useEffect(() => {
@@ -276,15 +271,16 @@ export function RowEditor({ draft, onChange, onCommit, onCancelEdit, editing }: 
                     />
                     <Label htmlFor="row-signed">Sellado</Label>
                 </div>
-                <div className="flex items-center gap-2">
-                    {warning && (
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                    {warnings.map((warning) => (
                         <Badge
+                            key={warning}
                             variant="outline"
                             className="gap-1 border-amber-500/50 text-amber-700 dark:text-amber-400"
                         >
-                            <AlertTriangle className="size-3" /> {LOTTERY_WARNING_TEXT[warning]}
+                            <AlertTriangle className="size-3" /> {ROW_WARNING_TEXT[warning]}
                         </Badge>
-                    )}
+                    ))}
                     <Button type="button" onClick={commit} disabled={!canCommit}>
                         {editing ? <Check /> : <Plus />} {editing ? 'Guardar fila' : 'Añadir fila'}
                     </Button>

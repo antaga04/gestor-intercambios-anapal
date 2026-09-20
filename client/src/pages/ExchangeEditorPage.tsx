@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Info, Loader2, Save, Send } from 'lucide-react';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { AlertTriangle, ArrowLeft, Info, Loader2, Save, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import type { PublicUser } from '@anapal/shared';
 import { exchangeTotalDecimos } from '@anapal/shared';
@@ -17,7 +17,9 @@ import { RowTable } from '@/features/exchanges/components/RowTable';
 import { ExchangeTotals } from '@/features/exchanges/components/ExchangeTotals';
 import { useCreateExchange, useExchange, useUpdateExchange } from '@/features/exchanges/hooks';
 import { UserPicker } from '@/features/users/components/UserPicker';
+import { usePublicUser } from '@/features/users/hooks';
 import { draftFromRow, draftToRow, emptyDraft, type RowDraft } from '@/features/exchanges/rowDraft';
+import { countWarnedRows, useOutgoingWarnings } from '@/features/exchanges/warnings';
 import { ApiClientError } from '@/lib/api';
 import { t } from '@/lib/messages';
 
@@ -26,6 +28,9 @@ export function ExchangeEditorPage({ mode }: { mode: 'create' | 'edit' }) {
     const navigate = useNavigate();
     const isEdit = mode === 'edit';
     const { data: exchange, isLoading } = useExchange(isEdit ? id : undefined);
+    // "Preparar mi sobre" on the detail page lands here with the counterpart already chosen.
+    const [params] = useSearchParams();
+    const { data: preselected } = usePublicUser(isEdit ? undefined : (params.get('para') ?? undefined));
 
     const [counterpart, setCounterpart] = useState<PublicUser | null>(null);
     const [rows, setRows] = useState<RowDraft[]>([]);
@@ -45,8 +50,20 @@ export function ExchangeEditorPage({ mode }: { mode: 'create' | 'edit' }) {
         setNote(exchange.note ?? '');
     }, [exchange]);
 
+    useEffect(() => {
+        if (preselected) setCounterpart((current) => current ?? preselected);
+    }, [preselected]);
+
     const totalDecimos = useMemo(() => exchangeTotalDecimos(rows.map(draftToRow)), [rows]);
     const signedCount = rows.filter((r) => r.signed).length;
+
+    // The row being typed joins the check as soon as its número is complete.
+    const numeros = useMemo(
+        () => [...rows.map((r) => r.numero), ...(draft.numero.length === 5 ? [draft.numero] : [])],
+        [rows, draft.numero],
+    );
+    const warningsFor = useOutgoingWarnings(counterpart?._id, numeros);
+    const warnedRows = countWarnedRows(rows, warningsFor);
 
     const commitRow = (row: RowDraft): boolean => {
         if (rows.some((r) => r.key !== row.key && r.numero === row.numero)) {
@@ -171,9 +188,22 @@ export function ExchangeEditorPage({ mode }: { mode: 'create' | 'edit' }) {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    {warnedRows > 0 && (
+                        <Alert className="border-amber-500/40 bg-amber-500/5 [&>svg]:text-amber-600 dark:[&>svg]:text-amber-400">
+                            <AlertTriangle />
+                            <AlertTitle>
+                                {warnedRows === 1 ? 'Hay un número con aviso' : `Hay ${warnedRows} números con aviso`}
+                            </AlertTitle>
+                            <AlertDescription>
+                                Un intercambio sirve para conseguir números que la otra administración no tiene. Pasa el
+                                ratón por el icono de cada número para ver el motivo. Puedes enviarlo igualmente.
+                            </AlertDescription>
+                        </Alert>
+                    )}
                     {rows.length > 0 ? (
                         <RowTable
                             rows={rows}
+                            warningsFor={warningsFor}
                             editingKey={editingKey ?? undefined}
                             onEdit={(row) => {
                                 setDraft(row);
@@ -196,6 +226,7 @@ export function ExchangeEditorPage({ mode }: { mode: 'create' | 'edit' }) {
                         onChange={setDraft}
                         onCommit={commitRow}
                         editing={!!editingKey}
+                        warningsFor={warningsFor}
                         onCancelEdit={() => {
                             setEditingKey(null);
                             setDraft(emptyDraft(draft.type));

@@ -43,7 +43,7 @@ export type LotteryWarning = 'numero_not_owned' | 'serie_not_owned';
 
 /**
  * Local check against the cached list — the same rule the server applies, without a round trip.
- * Returns `null` when the user has no list (no list, no check).
+ * Returns `null` when the user has no list (no list, no check). Texts live in `features/exchanges/warnings`.
  */
 export function useLotteryCheck() {
     const { data } = useLottery();
@@ -57,8 +57,3 @@ export function useLotteryCheck() {
         return series.every((serie) => seriesContains(owned.series, serie)) ? null : 'serie_not_owned';
     };
 }
-
-export const LOTTERY_WARNING_TEXT: Record<LotteryWarning, string> = {
-    numero_not_owned: 'No tienes este número en tu lotería',
-    serie_not_owned: 'No tienes esas series de este número',
-};

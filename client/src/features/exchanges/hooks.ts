@@ -8,6 +8,7 @@ export const exchangeKeys = {
     list: (params: Partial<ExchangeQuery>) => ['exchanges', 'list', params] as const,
     inbox: ['exchanges', 'inbox'] as const,
     detail: (id: string) => ['exchanges', 'detail', id] as const,
+    overlap: (to: string, numeros: string[]) => ['exchanges', 'overlap', to, numeros.join(',')] as const,
 };
 
 export function useExchanges(params: Partial<ExchangeQuery>, enabled = true) {
@@ -34,6 +35,21 @@ export function useExchange(id: string | undefined) {
         queryKey: exchangeKeys.detail(id ?? ''),
         queryFn: () => exchangesApi.get(id!),
         enabled: !!id,
+    });
+}
+
+/**
+ * Which of `numeros` the receiver `to` already owns or already gives me (docs/03 §2). Advisory only; the
+ * key is the sorted list so adding rows in any order hits the same cache entry.
+ */
+export function useExchangeOverlap(to: string | undefined, numeros: string[]) {
+    const sorted = [...new Set(numeros)].sort();
+    return useQuery({
+        queryKey: exchangeKeys.overlap(to ?? '', sorted),
+        queryFn: () => exchangesApi.overlap({ to: to!, numeros: sorted }),
+        enabled: !!to && sorted.length > 0,
+        staleTime: 30_000,
+        placeholderData: keepPreviousData,
     });
 }
 

@@ -73,4 +73,4 @@ Authorization matrix:
 
 - Reads `SUPERADMIN_EMAIL`, `SUPERADMIN_PASSWORD`, `SUPERADMIN_RECEPTOR_NUMBER`; creates or updates the superadmin user (`status: 'active'`, `role: 'superadmin'`, name "ANAPAL").
 - Creates a default campaign if none exists (name "Navidad <year>", `isActive: true`, deadline = Dec 1, draw = Dec 22) — editable later.
-- `--demo` flag: adds 10 fake active admons (`receptorNumber` 10001–10010, real-looking provinces) and a handful of exchanges in every status, plus lottery lists, to exercise the UI. Never run `--demo` against production.
+- `--demo` flag: adds 10 fake active admons (`receptorNumber` 10001–10010, real-looking provinces), a "Mi lotería" list of 12 numbers each (disjoint pools from a seeded PRNG, so the data is identical on every run) and 21 exchanges covering every status and pair situation for `admon10001`. Rows are always numbers from the sender's own list, so no envelope carries a number its receiver already has and no pair sends the same number both ways — the warnings of 03 §2 only appear when you add such a number yourself. Re-running wipes and recreates the demo exchanges and lists. Never run `--demo` against production.

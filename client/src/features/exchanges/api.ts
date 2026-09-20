@@ -2,6 +2,8 @@ import type {
     ControlList,
     ExchangeDetail,
     ExchangeInput,
+    ExchangeOverlap,
+    ExchangeOverlapInput,
     ExchangeQuery,
     ExchangeSummary,
     ExchangeUpdateInput,
@@ -15,6 +17,8 @@ export const exchangesApi = {
     inbox: () => request<ExchangeSummary[]>({ method: 'GET', url: '/exchanges/inbox' }),
     controlList: () => request<ControlList>({ method: 'GET', url: '/exchanges/control-list' }),
     get: (id: string) => request<ExchangeDetail>({ method: 'GET', url: `/exchanges/${id}` }),
+    overlap: (body: ExchangeOverlapInput) =>
+        request<ExchangeOverlap>({ method: 'POST', url: '/exchanges/overlap', data: body }),
     create: (body: ExchangeInput) => requestWithCode<ExchangeDetail>({ method: 'POST', url: '/exchanges', data: body }),
     update: (id: string, body: ExchangeUpdateInput) =>
         requestWithCode<ExchangeDetail>({ method: 'PUT', url: `/exchanges/${id}`, data: body }),

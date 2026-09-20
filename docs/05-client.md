@@ -135,7 +135,7 @@ Single page, two sections:
 2. **Lotería** — `RowTable` (editable rows) + `RowEditor` (inline form at the bottom or dialog on mobile):
     - `RowTypeSelect` (segmented: Billete / 1 décimo / Varios décimos). Type is sticky between rows.
     - Fields by type: número (5-digit masked input, auto-pad on blur), cantidad (hidden for `decimo`; auto for `billete` when series given; auto for `decimos` when items given), `SeriesFields` (serie desde / hasta) for billete, serie + fracción for decimo, `DecimosItemsField` (chips list of `serie/fracción` with add/remove) for decimos, `Checkbox` Sellado, nota.
-    - Inline validation from `validateRow`; lottery warnings (amber) from `useLotteryCheck`.
+    - Inline validation from `validateRow`; amber warnings from `useOutgoingWarnings` (my list via `useLotteryCheck` + `POST /exchanges/overlap` for what the receiver already has / gives back — 03 §2). A summary alert above the table counts the flagged rows; nothing blocks saving.
     - `ScannerStatus`: "Escáner conectado — escanea un décimo" (keyboard wedge always listening while editor is open) + button "Cámara" opening `CameraScannerDialog`. Scans go through `mergeScanIntoRow`; events drive toasts ("Serie inicial 35", "Rango 35–74 · 40 billetes", "Décimo añadido (3)", "Ya escaneado", "Nuevo número detectado").
     - `ExchangeTotals` footer: filas, décimos, **billetes** (bold, primary), firmados.
     - Sticky bottom bar: Guardar borrador · Guardar y enviar (create) / Guardar cambios (edit; warns "El destinatario tendrá que aceptar de nuevo" when status is accepted).
@@ -145,7 +145,7 @@ Single page, two sections:
 
 ### Detalle `/intercambios/:id`
 
-Header: counterpart `UserCard`, direction + status badges, dates. Read-only rows table with totals. Note. Actions by role/status (from 03 §3): owner → Editar, Enviar, Cancelar, Eliminar, Vista previa PDF, Descargar PDF; receiver + pending → Aceptar / Rechazar (dialog with optional motivo). If a reverse exchange exists: card "Intercambio de vuelta" linking to it. Opening as receiver marks it seen.
+One page per **relationship**, not per envelope: opening either exchange of a pair shows both halves side by side (`lg:grid-cols-2`; tabs "Doy / Recibo" under `md`, defaulting to the one opened). Header: "Intercambio con {name}", counterpart `UserCard`, and a balance strip (Doy X · Recibo Y · who gives more). Each half is an `EnvelopePanel` with its own colour (Doy = primary, Recibo = sky; `features/exchanges/envelopeStyle.ts`): icon + title + status, timeline line (enviado / respondido / visto), rejection alert, compact `RowTable` with warnings (`useOutgoingWarnings` / `useIncomingWarnings`), totals, note, and `ExchangeActions` (owner → Editar, Enviar, Cancelar, Eliminar, PDF; receiver + pending → Aceptar / Rechazar). A missing outgoing half shows "Preparar mi sobre" → `/intercambios/nuevo?para=<userId>` (the editor preselects the counterpart); a missing incoming half explains it will appear when they send one. The reverse exchange is loaded through `counterpartId` (hidden while it is their draft). Opening as receiver marks it seen. Admins who are not a party see "A ⇄ B" with sender names instead of Doy/Recibo and no warnings.
 
 ### Mi lotería `/mi-loteria`
 

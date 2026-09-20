@@ -88,7 +88,7 @@ export function ExchangeActions({ exchange, variant = 'menu', onDeleted }: Excha
                     >
                         Aceptar
                     </ActionItem>
-                    <ActionItem variant={variant} icon={X} onClick={() => setRejecting(true)}>
+                    <ActionItem variant={variant} icon={X} secondary onClick={() => setRejecting(true)}>
                         Rechazar
                     </ActionItem>
                 </>
@@ -103,7 +103,12 @@ export function ExchangeActions({ exchange, variant = 'menu', onDeleted }: Excha
                 </ActionItem>
             )}
             {canCancel && (
-                <ActionItem variant={variant} icon={X} onClick={() => void run(() => cancel.mutateAsync(exchange._id))}>
+                <ActionItem
+                    variant={variant}
+                    icon={X}
+                    secondary
+                    onClick={() => void run(() => cancel.mutateAsync(exchange._id))}
+                >
                     Cancelar envío
                 </ActionItem>
             )}

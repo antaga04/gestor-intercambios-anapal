@@ -178,6 +178,20 @@ Done when
 - [ ] Cold-start latency acceptable (< 2 s) thanks to cached DB connection.
 - [ ] `--demo` data absent in production; superadmin can log in.
 
+## Phase 11 — Migración de datos de la app anterior
+
+Steps
+
+1. Shared `types/legacy.ts` + `lottery/legacyRows.ts` (old lines → rows, tested).
+2. Server: `legacyExchange` model, `users.legacyId`, `exchanges.legacy`, `GET /legacy`, `dashboard.legacyCount`, `pnpm import-legacy -- <dump> [--dry-run]` (`server/src/scripts/importLegacy.ts`, pg dump COPY parser in `scripts/legacy/parseDump.ts`).
+3. Client: `/historico` page + conditional nav entry, "importado" alert on the exchange detail page.
+
+Done when
+
+- [x] `pnpm import-legacy -- dump.backup --dry-run` prints the report; the real run creates users (old passwords work), history and linked exchanges; a second run creates nothing.
+- [x] An imported user sees "Histórico" in the sidebar, every old record there, and the converted exchanges under "Intercambios".
+- [ ] Run against production right before the launch (after `pnpm seed`), then fix the accounts listed in the report from Admin › Usuarios.
+
 ## Later / nice-to-have (not in v1)
 
 - In-app notifications for accepted/rejected exchanges (no emails).

@@ -121,9 +121,16 @@ GET /dashboard → {
     envelopesToSend: number, envelopesToReceive: number,
     lastExchange: exchangeSummary | null,                             // most recently updated, any direction
     lotteryCount: number,
+    legacyCount: number,             // records imported from the previous app (shows the "Histórico" nav entry)
     adminPendingRequests?: number,   // admins only: pending password reset requests
 }
 ```
+
+### Legacy — `/legacy` (🔐, no campaign needed)
+
+| Method | Path      | Response                                         | Notes                                                                                                 |
+| ------ | --------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| GET    | `/legacy` | `LegacyExchange[]` (`legacy.list`), newest first | Read-only history of the previous app for the caller (see 02 "Migración"). ≤ ~60 per user, no paging. |
 
 ### Admin — `/admin` (🛡 unless noted)
 

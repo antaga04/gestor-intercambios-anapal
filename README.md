@@ -69,6 +69,17 @@ Scripts desde la raíz: `pnpm build`, `pnpm lint`, `pnpm typecheck`, `pnpm test`
 4. **Resend**: verifica el dominio de envío y pon ese remitente en `EMAIL_FROM`.
 5. **Seed de producción**: con `MONGO_URL` apuntando a Atlas y las variables `SUPERADMIN_*` definidas, ejecuta `pnpm --filter @anapal/server seed` (**sin** `--demo`). Crea el superadministrador y una campaña "Navidad <año>" activa que puedes editar desde `/admin/campanas`.
 
+### Migración de datos de la versión anterior
+
+Los datos de la app antigua (Supabase) se importan una sola vez, **después** del seed y **antes** de abrir el registro:
+
+```bash
+pnpm --filter @anapal/server import-legacy -- ruta/al/db_cluster-....backup --dry-run   # solo informe
+pnpm --filter @anapal/server import-legacy -- ruta/al/db_cluster-....backup             # importa
+```
+
+El script acepta el backup de Supabase (`.backup` o `.backup.gz`) y es idempotente. Importa los usuarios con su misma contraseña, guarda **todos** los registros antiguos en el histórico (visible en `/historico`) y convierte a intercambios de la nueva versión los que tienen a la otra administración registrada (detalles en [docs/02](docs/02-data-model.md#migración-desde-la-app-anterior)). Al terminar imprime un informe: revisa desde Admin › Usuarios las cuentas sin datos de remitente o con nº de receptor repetido (reciben un nº provisional `9xxxxx`).
+
 Cada nueva campaña se crea desde el panel (👑 Campañas): al activarla se desactiva la anterior y sus intercambios quedan consultables con el selector de campaña.
 
 ### Límites a tener en cuenta

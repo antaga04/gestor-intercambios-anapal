@@ -33,6 +33,7 @@ Vite + React 19 + TypeScript. Spanish-only UI. shadcn components, lucide icons, 
                 <Route path="/intercambios/:id/editar" element={<ExchangeEditorPage mode="edit" />} />
                 <Route path="/mi-loteria" element={<MyLotteryPage />} />
                 <Route path="/lista-control" element={<ControlListPage />} />
+                <Route path="/historico" element={<HistoricoPage />} />
                 <Route element={<RoleRoute roles={['admin', 'superadmin']} />}>
                     <Route path="/admin" element={<AdminPanelPage />} />
                     <Route path="/admin/usuarios" element={<AdminUsersPage />} />
@@ -156,6 +157,10 @@ One page per **relationship**, not per envelope: opening either exchange of a pa
 `ControlListTotals` cards (sobres a enviar / a recibir, billetes doy / recibo, borradores sin enviar — highlighted and linking to the drafts filter when > 0). `ControlListTable`: Nº receptor, Administración, Población, Provincia, Doy (billetes + estado, links to the exchange), Recibo (same), Dirección; cards under `md`. Header actions: Descargar PDF, Descargar CSV (both generated client-side from the cached `ControlList`). A "Sobres para imprimir" panel holds the "Solo sobres" switch and "Descargar todos los sobres (N)". `useControlList()` (`['control-list']`, `null` when no campaign) is invalidated by every exchange mutation.
 
 PDF actions on exchanges: `ExchangeActions` adds "Vista previa PDF" (opens `PdfPreviewDialog`) and "Descargar PDF" for the sender in both the dropdown and the detail-page buttons. `/intercambios` gets "Descargar todos los sobres" (envelopes + sheets) next to "Nuevo intercambio", enabled when the dashboard reports envelopes to send; the dashboard quick actions gain "Descargar sobres" pointing to `/lista-control`.
+
+### Histórico `/historico`
+
+Read-only list of the records imported from the previous app (`useLegacyExchanges()`, `['legacy']`, 5 min stale). Info alert explaining what was converted, three totals (registros, convertidos, daba / recibía), search by administración / nº receptor / número, and `LegacyTable`: fecha, administración (as typed back then), estado (old vocabulary), doy / recibo in billetes, the three envelope ticks (entregado / recibido / recepcionado) and "Nueva versión" buttons linking to the exchanges built from the record; each row expands to its observaciones and lines (✓ on lines that became rows). Cards under `md`. The nav entry (`MAIN_NAV` item with `legacyOnly`) is only shown when `dashboard.legacyCount > 0`. The exchange detail page shows an "Importado de la versión anterior" alert (with the count of lines that could not be converted) when either envelope has `legacy`.
 
 ### Admin pages — see 07.
 

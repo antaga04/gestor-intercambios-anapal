@@ -27,6 +27,8 @@ export interface DashboardPayload {
     envelopesToReceive: number;
     lastExchange: ExchangeSummary | null;
     lotteryCount: number;
+    /** Records imported from the previous app; the "Histórico" page is only offered when > 0. */
+    legacyCount: number;
     /** Only for admins: pending password reset requests. */
     adminPendingRequests?: number;
 }

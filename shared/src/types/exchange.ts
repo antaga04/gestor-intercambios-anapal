@@ -45,6 +45,8 @@ export interface ExchangeDetail extends ExchangeSummary {
     note?: string;
     rejectReason?: string;
     campaign: { _id: string; name: string; exchangeDeadline: string };
+    /** Present when the exchange was imported from the previous app (see docs/02 "Migración"). */
+    legacy?: { skippedLines: number };
 }
 
 /**

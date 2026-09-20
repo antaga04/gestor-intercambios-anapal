@@ -96,5 +96,6 @@ export function toExchangeDetail(
             name: campaign.name,
             exchangeDeadline: campaign.exchangeDeadline.toISOString(),
         },
+        legacy: exchange.legacy ? { skippedLines: exchange.legacy.skippedLines } : undefined,
     };
 }

@@ -48,6 +48,14 @@ const exchangeSchema = new mongoose.Schema(
         respondedAt: { type: Date },
         rejectReason: { type: String, maxlength: LIMITS.rejectReasonMax },
         note: { type: String, maxlength: LIMITS.noteMax },
+        /** Set by `pnpm import-legacy`: the previous-app record it came from and how many lines could not be converted. */
+        legacy: {
+            type: new mongoose.Schema(
+                { id: { type: String, required: true }, skippedLines: { type: Number, default: 0 } },
+                { _id: false },
+            ),
+            required: false,
+        },
     },
     { timestamps: true, collection: 'exchanges' },
 );
@@ -56,6 +64,7 @@ const exchangeSchema = new mongoose.Schema(
 exchangeSchema.index({ campaign: 1, from: 1, to: 1 }, { unique: true });
 exchangeSchema.index({ campaign: 1, to: 1, status: 1 });
 exchangeSchema.index({ campaign: 1, from: 1, status: 1 });
+exchangeSchema.index({ 'legacy.id': 1 }, { sparse: true });
 
 /** Amounts are always derived server-side; values sent by the client are ignored. */
 exchangeSchema.pre('validate', function () {

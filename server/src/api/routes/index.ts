@@ -6,6 +6,7 @@ import exchangesRouter from '@/api/routes/exchanges';
 import lotteryRouter from '@/api/routes/lottery';
 import dashboardRouter from '@/api/routes/dashboard';
 import adminRouter from '@/api/routes/admin';
+import legacyRouter from '@/api/routes/legacy';
 
 const router: Router = Router();
 
@@ -16,5 +17,6 @@ router.use('/exchanges', exchangesRouter);
 router.use('/lottery', lotteryRouter);
 router.use('/dashboard', dashboardRouter);
 router.use('/admin', adminRouter);
+router.use('/legacy', legacyRouter);
 
 export default router;

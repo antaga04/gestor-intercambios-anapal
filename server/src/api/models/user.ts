@@ -21,11 +21,14 @@ const userSchema = new mongoose.Schema(
         /** Sends within the 24h window that started at lastVerificationEmailAt (reset when the window expires). */
         verificationEmailsWindowCount: { type: Number, default: 0 },
         lastVerificationEmailAt: { type: Date },
+        /** `auth.users.id` of the previous app when the account was imported by `pnpm import-legacy`. */
+        legacyId: { type: String },
     },
     { timestamps: true, collection: 'users' },
 );
 
 userSchema.index({ name: 'text', poblacion: 'text' });
+userSchema.index({ legacyId: 1 }, { unique: true, sparse: true });
 
 export type UserSchema = InferSchemaType<typeof userSchema>;
 export type UserDocument = HydratedDocument<UserSchema>;

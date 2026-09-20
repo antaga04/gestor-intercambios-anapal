@@ -10,6 +10,7 @@
         "build": "tsup",
         "start": "node --env-file-if-exists=.env dist/index.js",
         "seed": "tsx --env-file-if-exists=.env src/seed/index.ts",
+        "import-legacy": "tsx --env-file-if-exists=.env src/scripts/importLegacy.ts",
         "lint": "eslint .",
         "typecheck": "tsc --noEmit"
     },

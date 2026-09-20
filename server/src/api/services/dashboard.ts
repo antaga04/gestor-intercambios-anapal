@@ -3,6 +3,7 @@ import type { DashboardPayload, ExchangeStatusCounts, ExchangeStatus } from '@an
 import { Exchange } from '@/api/models/exchange';
 import { LotteryNumber } from '@/api/models/lotteryNumber';
 import { PasswordResetRequest } from '@/api/models/passwordResetRequest';
+import { countForUser as countLegacyForUser } from '@/api/services/legacy';
 import type { CampaignDocument } from '@/api/models/campaign';
 import { PUBLIC_USER_FIELDS } from '@/api/models/user';
 import { isCampaignClosed } from '@/middlewares/campaign';
@@ -41,22 +42,26 @@ export async function getDashboard(user: AuthUser, campaign: CampaignDocument): 
     const userId = new Types.ObjectId(user.id);
     const campaignId = campaign._id;
 
-    const [outgoing, incoming, inboxUnread, lotteryCount, lastExchange, adminPendingRequests] = await Promise.all([
-        countsByStatus(campaignId, 'from', userId),
-        countsByStatus(campaignId, 'to', userId),
-        Exchange.countDocuments({ campaign: campaignId, to: userId, status: 'pending', seenByReceiverAt: null }),
-        LotteryNumber.countDocuments({ campaign: campaignId, user: userId }),
-        // Incoming drafts are private to their sender: never surface one as "último intercambio".
-        Exchange.findOne({
-            campaign: campaignId,
-            $or: [{ from: userId }, { to: userId, status: { $ne: 'draft' } }],
-        })
-            .sort({ updatedAt: -1 })
-            .populate('from', PUBLIC_USER_FIELDS)
-            .populate('to', PUBLIC_USER_FIELDS)
-            .populate('counterpart', 'status'),
-        isAdmin(user.role) ? PasswordResetRequest.countDocuments({ status: 'pending' }) : Promise.resolve(undefined),
-    ]);
+    const [outgoing, incoming, inboxUnread, lotteryCount, lastExchange, adminPendingRequests, legacyCount] =
+        await Promise.all([
+            countsByStatus(campaignId, 'from', userId),
+            countsByStatus(campaignId, 'to', userId),
+            Exchange.countDocuments({ campaign: campaignId, to: userId, status: 'pending', seenByReceiverAt: null }),
+            LotteryNumber.countDocuments({ campaign: campaignId, user: userId }),
+            // Incoming drafts are private to their sender: never surface one as "último intercambio".
+            Exchange.findOne({
+                campaign: campaignId,
+                $or: [{ from: userId }, { to: userId, status: { $ne: 'draft' } }],
+            })
+                .sort({ updatedAt: -1 })
+                .populate('from', PUBLIC_USER_FIELDS)
+                .populate('to', PUBLIC_USER_FIELDS)
+                .populate('counterpart', 'status'),
+            isAdmin(user.role)
+                ? PasswordResetRequest.countDocuments({ status: 'pending' })
+                : Promise.resolve(undefined),
+            countLegacyForUser(userId),
+        ]);
 
     const counterpartStatus = (lastExchange?.counterpart as { status?: ExchangeStatus } | null)?.status;
 
@@ -78,6 +83,7 @@ export async function getDashboard(user: AuthUser, campaign: CampaignDocument): 
         envelopesToReceive: incoming.liveEnvelopes,
         lastExchange: lastExchange ? toExchangeSummary(lastExchange, user.id, counterpartStatus) : null,
         lotteryCount,
+        legacyCount,
         adminPendingRequests,
     };
 }

@@ -1,6 +1,3 @@
 {
-    "rewrites": [
-        { "source": "/api/(.*)", "destination": "https://REPLACE-WITH-SERVER-PROJECT.vercel.app/api/$1" },
-        { "source": "/(.*)", "destination": "/" }
-    ]
+    "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }

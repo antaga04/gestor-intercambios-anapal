@@ -23,7 +23,7 @@
         "noFallthroughCasesInSwitch": true,
         "noUncheckedSideEffectImports": true,
 
-        "baseUrl": ".",
+        "rootDir": ".",
         "paths": { "@/*": ["./src/*"] }
     },
     "include": ["src"]

@@ -10,6 +10,7 @@ dist-ssr
 *.local
 .env
 .env.*
+*.env
 !.env.dist
 .vercel
 

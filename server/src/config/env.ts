@@ -9,7 +9,12 @@ const envSchema = z.object({
     PORT: z.coerce.number().int().positive().default(8000),
     IS_PRODUCTION: boolFromString,
     VERCEL: z.string().optional(),
-    CLIENT_URL: z.string().url().default('http://localhost:5173'),
+    // No trailing slash: it is compared verbatim against the browser's Origin header for CORS.
+    CLIENT_URL: z
+        .string()
+        .url()
+        .default('http://localhost:5173')
+        .transform((v) => v.replace(/\/+$/, '')),
     COOKIE_DOMAIN: z
         .string()
         .optional()

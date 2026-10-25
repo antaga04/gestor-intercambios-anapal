@@ -21,18 +21,16 @@ export function createApp(): Express {
     app.use(helmet());
     app.use(cookieParser());
 
-    // In production the client project proxies /api to this app, so requests are same-origin.
-    // CORS is only needed when the client is served from another origin (local dev without proxy).
-    if (!env.IS_PRODUCTION) {
-        app.use(
-            cors({
-                origin: env.CLIENT_URL,
-                methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
-                allowedHeaders: ['Content-Type'],
-                credentials: true,
-            }),
-        );
-    }
+    // The client is served from its own origin (localhost:5173 / its own vercel.app domain) and calls this
+    // API directly, so CORS must allow it with credentials (cookies).
+    app.use(
+        cors({
+            origin: env.CLIENT_URL,
+            methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
+            allowedHeaders: ['Content-Type'],
+            credentials: true,
+        }),
+    );
 
     app.use(express.json({ limit: '1mb' }));
     app.use(express.urlencoded({ limit: '1mb', extended: true }));

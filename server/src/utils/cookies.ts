@@ -7,11 +7,18 @@ export const REFRESH_COOKIE = 'refresh_token';
 /** The refresh cookie is only sent to /api/auth/* (refresh + logout). */
 const REFRESH_COOKIE_PATH = '/api/auth';
 
+/**
+ * Client and API live on different sites in production (two unrelated *.vercel.app domains), so the
+ * cookies are third-party there and need `SameSite=None; Secure`. Locally (localhost:5173 → localhost:8000,
+ * same site) or with a shared apex domain (`COOKIE_DOMAIN`), `Lax` is enough.
+ */
+const crossSite = env.IS_PRODUCTION && !env.COOKIE_DOMAIN;
+
 function baseOptions(): CookieOptions {
     return {
         httpOnly: true,
         secure: env.IS_PRODUCTION,
-        sameSite: 'lax',
+        sameSite: crossSite ? 'none' : 'lax',
         domain: env.COOKIE_DOMAIN,
     };
 }

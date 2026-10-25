@@ -136,7 +136,7 @@ Folder structure:
 ```
 server/
 ├── api/index.ts                 # Vercel entry: `import app from '../dist/index.js'; export default app;`
-├── vercel.json                  # rewrites /(.*) → /api; framework null, empty `public` as outputDirectory (the API is all function, no static files)
+├── vercel.json                  # rewrites /(.*) → /api; framework null, `public` (only robots.txt) as outputDirectory, since Vercel requires a non-empty one
 ├── tsup.config.ts               # entry src/index.ts, esm, noExternal: ['@anapal/shared']
 ├── tsconfig.json                # paths @/* → src/*
 ├── .env.dist

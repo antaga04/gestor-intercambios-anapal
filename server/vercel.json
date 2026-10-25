@@ -1,7 +1,7 @@
 {
     "version": 2,
     "framework": null,
-    "buildCommand": "pnpm build && mkdir -p public",
+    "buildCommand": "pnpm build",
     "outputDirectory": "public",
     "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
 }

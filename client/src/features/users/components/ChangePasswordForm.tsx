@@ -11,13 +11,9 @@ import { usersApi } from '@/features/users/api';
 import { handleFormError } from '@/lib/forms';
 import { t } from '@/lib/messages';
 
+// safeExtend keeps the shared schema's "new ≠ current" refinement (plain .extend() throws on refined objects).
 const formSchema = changePasswordSchema
-    .innerType()
-    .extend({ confirmPassword: z.string() })
-    .refine((v) => v.currentPassword !== v.newPassword, {
-        path: ['newPassword'],
-        message: 'La nueva contraseña debe ser distinta de la actual',
-    })
+    .safeExtend({ confirmPassword: z.string() })
     .refine((v) => v.newPassword === v.confirmPassword, {
         path: ['confirmPassword'],
         message: 'Las contraseñas no coinciden',

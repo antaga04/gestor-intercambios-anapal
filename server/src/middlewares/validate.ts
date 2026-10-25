@@ -16,7 +16,7 @@ export function validate(schemas: ValidateSchemas): RequestHandler {
         try {
             if (schemas.body) req.body = schemas.body.parse(req.body ?? {});
             if (schemas.query) req.validatedQuery = schemas.query.parse(req.query ?? {});
-            if (schemas.params) req.params = schemas.params.parse(req.params);
+            if (schemas.params) req.params = schemas.params.parse(req.params) as Request['params'];
             next();
         } catch (err) {
             next(err);

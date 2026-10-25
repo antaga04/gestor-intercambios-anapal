@@ -31,7 +31,7 @@ pnpm install
 cp server/.env.dist server/.env     # rellena SUPERADMIN_* y los secretos
 cp client/.env.dist client/.env
 pnpm --filter @anapal/server seed --demo   # superadmin + campaña + 10 admons de prueba (contraseña Demo1234)
-pnpm dev                                    # client http://localhost:5173 (proxy /api → :8000), server http://localhost:8000
+pnpm dev                                    # client http://localhost:5173, API http://localhost:8000/api
 ```
 
 Usuarios de prueba: `admon10001@example.com` … `admon10010@example.com` / `Demo1234`. Sin `RESEND_API_KEY` los emails se imprimen en la consola del servidor.
@@ -42,30 +42,30 @@ Scripts desde la raíz: `pnpm build`, `pnpm lint`, `pnpm typecheck`, `pnpm test`
 
 ### `server/.env`
 
-| Variable                                              | Descripción                                                                        |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `PORT`                                                | Puerto local (Vercel lo ignora).                                                   |
-| `IS_PRODUCTION`                                       | `true` en producción: cookies `Secure`, sin datos demo.                            |
-| `CLIENT_URL`                                          | URL pública del cliente; se usa en los enlaces de los emails y como origen CORS.   |
-| `COOKIE_DOMAIN`                                       | Solo con dominio propio (p. ej. `.anapal.es`); vacío en local y en `*.vercel.app`. |
-| `MONGO_URL`                                           | Cadena de conexión de MongoDB / Atlas.                                             |
-| `ACCESS_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`         | Secretos JWT / HMAC (mín. 32 caracteres aleatorios cada uno).                      |
-| `ACCESS_TOKEN_TTL`, `REFRESH_TOKEN_TTL_DAYS`          | Vida del token de acceso (`15m`) y del refresh (`30` días).                        |
-| `EMAIL_CONFIRMATION_SECRET`, `…_TTL`                  | Firma y caducidad (`24h`) del enlace de verificación.                              |
-| `RESEND_API_KEY`, `EMAIL_FROM`                        | Resend. `EMAIL_FROM` debe ser de un dominio verificado en Resend.                  |
-| `SUPERADMIN_EMAIL`, `…_PASSWORD`, `…_RECEPTOR_NUMBER` | Cuenta que crea `pnpm seed`.                                                       |
+| Variable                                              | Descripción                                                                                                              |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `PORT`                                                | Puerto local (Vercel lo ignora).                                                                                         |
+| `IS_PRODUCTION`                                       | `true` en producción: cookies `Secure` (y `SameSite=None` sin `COOKIE_DOMAIN`), sin datos demo.                          |
+| `CLIENT_URL`                                          | URL pública del cliente (sin `/` final); enlaces de los emails y origen CORS permitido.                                  |
+| `COOKIE_DOMAIN`                                       | Solo si cliente y API comparten dominio propio (p. ej. `.anapal.es`; cookies `Lax`); vacío en local y en `*.vercel.app`. |
+| `MONGO_URL`                                           | Cadena de conexión de MongoDB / Atlas.                                                                                   |
+| `ACCESS_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`         | Secretos JWT / HMAC (mín. 32 caracteres aleatorios cada uno).                                                            |
+| `ACCESS_TOKEN_TTL`, `REFRESH_TOKEN_TTL_DAYS`          | Vida del token de acceso (`15m`) y del refresh (`30` días).                                                              |
+| `EMAIL_CONFIRMATION_SECRET`, `…_TTL`                  | Firma y caducidad (`24h`) del enlace de verificación.                                                                    |
+| `RESEND_API_KEY`, `EMAIL_FROM`                        | Resend. `EMAIL_FROM` debe ser de un dominio verificado en Resend.                                                        |
+| `SUPERADMIN_EMAIL`, `…_PASSWORD`, `…_RECEPTOR_NUMBER` | Cuenta que crea `pnpm seed`.                                                                                             |
 
 ### `client/.env`
 
-| Variable       | Descripción                                                                     |
-| -------------- | ------------------------------------------------------------------------------- |
-| `VITE_API_URL` | Base de la API. `/api` tanto en local (proxy de Vite) como en Vercel (rewrite). |
+| Variable       | Descripción                                                                                                |
+| -------------- | ---------------------------------------------------------------------------------------------------------- |
+| `VITE_API_URL` | URL completa de la API: `http://localhost:8000/api` en local, `https://<server>.vercel.app/api` en Vercel. |
 
 ## Despliegue
 
 1. **MongoDB Atlas**: crea un clúster y un usuario de base de datos. En _Network Access_ permite `0.0.0.0/0` (las funciones de Vercel no tienen IP fija) o usa la integración Atlas–Vercel.
 2. **Proyecto Vercel `server`**: importa el repositorio con _Root Directory_ `server`, _Install Command_ `pnpm install --frozen-lockfile` y _Build Command_ `pnpm build` (activa "Include source files outside of the Root Directory" para que compile `shared`). Añade todas las variables de `server/.env.dist` con `IS_PRODUCTION=true` y `CLIENT_URL` = URL del cliente. Comprueba `https://<server>.vercel.app/api/health`.
-3. **Proyecto Vercel `client`**: _Root Directory_ `client`, _Output Directory_ `dist`. En [`client/vercel.json`](client/vercel.json) sustituye `REPLACE-WITH-SERVER-PROJECT` por el nombre del proyecto del servidor: así `/api/*` se sirve desde el mismo origen y las cookies funcionan sin configuración extra. `VITE_API_URL=/api`.
+3. **Proyecto Vercel `client`**: _Root Directory_ `client`, _Output Directory_ `dist`. Variable `VITE_API_URL=https://<server>.vercel.app/api` (se incrusta en el build: tras cambiarla hay que redesplegar). El cliente llama a la API directamente; el servidor acepta CORS solo desde `CLIENT_URL`.
 4. **Resend**: verifica el dominio de envío y pon ese remitente en `EMAIL_FROM`.
 5. **Seed de producción**: con `MONGO_URL` apuntando a Atlas y las variables `SUPERADMIN_*` definidas, ejecuta `pnpm --filter @anapal/server seed` (**sin** `--demo`). Crea el superadministrador y una campaña "Navidad <año>" activa que puedes editar desde `/admin/campanas`.
 
@@ -85,13 +85,13 @@ Cada nueva campaña se crea desde el panel (👑 Campañas): al activarla se des
 ### Límites a tener en cuenta
 
 - **Emails**: plan gratuito de Resend, 100/día y 3000/mes. Solo se envía el email de verificación (máx. 3 por usuario cada 24 h; el servidor deja de enviar al llegar a 90 en un día). El panel muestra el consumo.
-- **Cookies**: el cliente y la API deben verse desde el mismo origen (rewrite de Vercel) o compartir dominio (`COOKIE_DOMAIN`).
+- **Cookies**: con cliente y API en dominios `*.vercel.app` distintos las cookies de sesión son de terceros (`SameSite=None; Secure`). Safari (y cualquier navegador que bloquee cookies de terceros) no las envía, así que la sesión no se mantiene ahí. Para evitarlo: dominio propio compartido (`app.` + `api.` con `COOKIE_DOMAIN`).
 - **Arranque en frío**: la conexión a Mongo se cachea entre invocaciones; la primera petición tras un rato puede tardar 1–2 s.
 - **PDFs** se generan en el navegador: para muchos sobres (> 100) en móviles antiguos puede tardar unos segundos.
 
 ## Comprobación tras desplegar
 
-- [ ] `GET /api/health` responde y `Set-Cookie` del login lleva `HttpOnly; Secure; SameSite=Lax`.
+- [ ] `GET /api/health` responde y `Set-Cookie` del login lleva `HttpOnly; Secure; SameSite=None` (`Lax` si hay `COOKIE_DOMAIN`).
 - [ ] Registro → email de verificación recibido → verificar → entrar. Recargar mantiene la sesión; tras 15 min sigue funcionando (refresh transparente); cerrar sesión redirige a `/login`.
 - [ ] Con dos administraciones de prueba: A crea un intercambio con B y lo envía; B lo ve en su bandeja y lo acepta; B crea uno de vuelta y ambos ven "Ambos".
 - [ ] Vista previa e impresión de un sobre: el texto cae en las casillas de la plantilla (imprimir sin "ajustar a la página").

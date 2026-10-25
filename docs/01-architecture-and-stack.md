@@ -107,18 +107,15 @@ Dependencies: `zod@^3` (single copy for the workspace). Dev: `vitest`, `typescri
 
 ```json
 {
-    "rewrites": [
-        { "source": "/api/(.*)", "destination": "https://<server-project>.vercel.app/api/$1" },
-        { "source": "/(.*)", "destination": "/" }
-    ]
+    "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
 ```
 
-The first rewrite proxies API calls through the client domain so cookies are first-party (see 06). In dev, `vite.config.ts` does the same with `server.proxy['/api'] → http://localhost:8000`.
+SPA fallback only. Client and API are on different origins (dev: `localhost:5173` → `localhost:8000`; prod: two unrelated `*.vercel.app` domains) and the client calls the API directly via `VITE_API_URL`; the server enables CORS for `CLIENT_URL` with credentials (see 06 for the cookie implications).
 
 Scripts: `dev` (vite --host), `build` (tsc -b && vite build), `preview`, `lint`, `typecheck` (tsc --noEmit).
 
-`client/.env.dist`: `VITE_API_URL=/api`.
+`client/.env.dist`: `VITE_API_URL=http://localhost:8000/api` (prod: `https://<server-project>.vercel.app/api`).
 
 Assets: copy `favicon.ico`, `public/*` from this folder into `client/public/`; `globals.css` → `client/src/globals.css` imported from `main.tsx`. Add `client/public/manifest.webmanifest` (name "Intercambios ANAPAL", theme color `#ff660d`, icons 192/512).
 
@@ -175,7 +172,7 @@ Scripts: `dev`, `build`, `start` (node dist/index.js), `seed` (tsx src/seed/inde
 # Server
 PORT=8000
 IS_PRODUCTION=false
-CLIENT_URL=http://localhost:5173        # used for email links and (dev only) CORS
+CLIENT_URL=http://localhost:5173        # used for email links and as the CORS origin
 COOKIE_DOMAIN=                          # empty locally; set only if using a custom apex domain
 
 # Database
@@ -202,7 +199,7 @@ SUPERADMIN_RECEPTOR_NUMBER=00000
 ### `client/.env.dist`
 
 ```
-VITE_API_URL=/api
+VITE_API_URL=http://localhost:8000/api
 ```
 
 ## Lint / format / TS

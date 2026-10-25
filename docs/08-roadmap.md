@@ -15,7 +15,7 @@ Steps
 Done when
 
 - [x] `pnpm install && pnpm typecheck && pnpm lint && pnpm test` pass.
-- [x] `pnpm dev` serves client on :5173 with the orange theme and server on :8000 answering `/api/health`; client proxy `/api` works.
+- [x] `pnpm dev` serves client on :5173 with the orange theme and server on :8000 answering `/api/health`; client reaches the API at `http://localhost:8000/api` (CORS).
 - [x] `pnpm build` produces `client/dist` and `server/dist/index.js` that bundles shared code.
 
 ## Phase 1 — Server core
@@ -165,7 +165,7 @@ Steps
 
 1. Mongo Atlas cluster + user; IP allowlist `0.0.0.0/0` (Vercel) or Atlas–Vercel integration.
 2. Vercel project `server` (root `server`), env vars from `.env.dist`; verify `https://<server>.vercel.app/api/health`.
-3. Vercel project `client` (root `client`), set the server URL in `vercel.json` rewrite (or via env-substituted build step), `VITE_API_URL=/api`.
+3. Vercel project `client` (root `client`), `VITE_API_URL=https://<server>.vercel.app/api`; server `CLIENT_URL` = client URL.
 4. Resend: verify sending domain, set `EMAIL_FROM`; run `pnpm seed` against production DB (superadmin only, no `--demo`).
 5. ~~README: description, stack, local setup, env tables, deploy steps, seeding, "cómo funciona el intercambio" summary, limits (emails).~~ Done.
 6. ~~Smoke test checklist in README.~~ Done — the checklist is the last section of the README; tick it on the production deploy.
@@ -174,7 +174,7 @@ Steps
 
 Done when
 
-- [ ] Production URLs work end-to-end with cookies (check `Set-Cookie` has `Secure; HttpOnly; SameSite=Lax` and requests go through the proxy).
+- [ ] Production URLs work end-to-end with cookies (check `Set-Cookie` has `Secure; HttpOnly; SameSite=None` and CORS preflights succeed).
 - [ ] Cold-start latency acceptable (< 2 s) thanks to cached DB connection.
 - [ ] `--demo` data absent in production; superadmin can log in.
 

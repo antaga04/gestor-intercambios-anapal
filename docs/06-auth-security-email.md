@@ -9,9 +9,9 @@ Goals: long-lived sessions without sending emails (Resend free tier: 100/day, 3 
 | Access token  | JWT `{ sub: userId, role, iat, exp }` signed with `ACCESS_TOKEN_SECRET` | 15 min (`ACCESS_TOKEN_TTL`)        | cookie `access_token`, `Path=/`                  | no                                                   |
 | Refresh token | 48 random bytes base64url                                               | 30 days (`REFRESH_TOKEN_TTL_DAYS`) | cookie `refresh_token`, `Path=/api/auth/refresh` | `refreshtokens` doc with HMAC-SHA256 hash, family id |
 
-Cookie attributes (both): `HttpOnly`, `SameSite=Lax`, `Secure` when `IS_PRODUCTION=true`, `Domain=COOKIE_DOMAIN` only if set. `refresh_token` also gets `Max-Age` = 30 days; `access_token` gets `Max-Age` = 15 min.
+Cookie attributes (both): `HttpOnly`, `SameSite=None` in production without `COOKIE_DOMAIN`, otherwise `SameSite=Lax`; `Secure` when `IS_PRODUCTION=true`, `Domain=COOKIE_DOMAIN` only if set. `refresh_token` also gets `Max-Age` = 30 days; `access_token` gets `Max-Age` = 15 min.
 
-Why `Lax` works: the client Vercel project rewrites `/api/*` to the server project, so from the browser's point of view API calls are same-origin (see 01). If a custom domain is used instead (`app.example.com` + `api.example.com`), set `COOKIE_DOMAIN=.example.com` — still same-site, still `Lax`. Do **not** use `SameSite=None` unless the two apps end up on unrelated domains.
+Why `None` in production: for now client and API are deployed on two unrelated `*.vercel.app` domains (`vercel.app` is a public suffix, so they are different sites) and the client calls the API directly (see 01). The cookies are therefore third-party and need `SameSite=None; Secure`. Browsers that block third-party cookies (Safari by default) will not keep the session. Locally `localhost:5173` → `localhost:8000` is same-site, so `Lax` works. Once a custom domain is used (`app.example.com` + `api.example.com`), set `COOKIE_DOMAIN=.example.com` — same-site again, cookies switch back to `Lax` automatically.
 
 ## Flows
 
@@ -74,7 +74,7 @@ Email budget safeguards:
 
 - `helmet()` with defaults (API only, no CSP needed for JSON). `app.disable('x-powered-by')`.
 - `express.json({ limit: '1mb' })`; lottery import chunked to keep bodies small.
-- CORS: only in dev when the client is served from another origin (`CLIENT_URL`) with `credentials: true`; in production the proxy makes it same-origin, so CORS middleware can be skipped or restricted to `CLIENT_URL`.
+- CORS: always on, restricted to `CLIENT_URL` with `credentials: true` (client and API are on different origins in dev and prod).
 - Rate limits per 04; the auth tier uses `skipSuccessfulRequests` so shared office computers are not locked out by normal logins while brute force still is. Key = `USER-<id>` if authenticated else hashed IP + UA (reference approach with `request-ip`).
 - All ids validated with `objectIdSchema` before hitting Mongo. Ownership checks in services, never in controllers alone.
 - Zod `strict()` on request bodies to reject unknown fields (prevents mass assignment: `role`, `status`, `amountDecimos`…).
